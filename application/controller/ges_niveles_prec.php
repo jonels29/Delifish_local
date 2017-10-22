@@ -64,6 +64,26 @@ $this->cus_name = $customer_name;
 	
 }
 
+
+
+public function CheckError(){
+
+
+  $CHK_ERROR =  $this->model->read_db_error();
+  
+
+  if ($CHK_ERROR!=''){ 
+
+   die("<script>$(window).load(  
+        function(){   
+          MSG_ERROR('".$CHK_ERROR."',0);
+         }
+       );</script>"); 
+
+  }
+
+}
+
 }
 
 ?>

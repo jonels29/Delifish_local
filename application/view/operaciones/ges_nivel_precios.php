@@ -160,183 +160,166 @@ function set_div(val){
 
 <?php
 
-$OK = FALSE;
-
 //SE EJECUTA SCRIPT PHP SI SE DÁ SUBMIT AL MOTON "SUBIR"
 if (isset($_POST['submit'])){
 
-$TABLE = '`PRI_LIST_ITEM`';
-
-
-		if ($_POST['price_list'] != '') {
-						
-					$priceid = $_POST['price_list'];
-
-					//elimino la lista de items para ese idprice
-					$DEL_STATEMENT = 'DELETE FROM '.$TABLE.' WHERE IDPRICE = "'.$priceid.'"';
-	                $res = $this->model->Query($DEL_STATEMENT);
-
-	               $OK = TRUE;
-
-		}else{
-
-		    		$priceid = $_POST['price_id'];
-
-                    //CHECA SI YA EXISTE EL ID PROPUESTO
-					$check_id = $this->model->Query('SELECT IDPRICE FROM PRI_LIST_ID WHERE IDPRICE ="'.$priceid.'"');
-
-					if($check_id!=''){//SI EXISTE INDICA ERROR y mata el proceso php
-
-	                
-		            echo "<script>$(window).load(function(){ MSG_ERROR('EL ID DE LA LISTA DE PRECIO PROPUESTA YA EXISTE',0); });</script>";
-				    $OK = false;		            
-
-					}else{
-
-                    $OK = TRUE;
-
-					}
-
-
-
-	    }
-
-
-	//INI LECTURA DE ARCHIVO EXCEL
-	$reader=new Spreadsheet_Excel_Reader();
-
-	$filename=$_FILES["price_file"]["tmp_name"];
-
-	if($OK == TRUE){
-
-		if($_FILES["price_file"]["size"] > 0)
-		 {
-
-			$reader->setUTFEncoder('iconv');
-			$reader->setOutputEncoding('UTF-8');
-			$reader->read($filename);
-
-			 foreach($reader->sheets as $k=>$data)
-			 {
-	        
-
-				$i=2;
-				$values = array();
-
-				 while ($i<=$data['numRows']){
-
-				 	$values['1'] = $priceid;
-
-					foreach($data['cells'][$i] as $KEY=>$row) 
-					{
-						   
-	                            if($row !=''){
-	                   	
-							if ($KEY=='1')   	$values['2'] = utf8_decode($row) ;
-							if ($KEY=='2')   	$values['3'] = utf8_decode($row) ;
-							if ($KEY=='3')   	$values['4'] = utf8_decode($row) ;
-							if ($KEY=='4')   	$values['5'] = utf8_decode($row) ;      	
-	                              }
-
-					
-				   }
-
-				   $values['6'] = $this->model->id_compania ;
-
-	             //INSERTA EN BD LA LINEA ACTUAL
-				  $STATEMENT= "INSERT INTO ".$TABLE." (
-						`IDPRICE`,
-						`IDITEM` ,
-						`DESCRIPTION` , 
-						`PRICE` ,
-						`UNIT`,
-						`ID_compania`)  
-						VALUES 
-						('".implode("','", $values)."');";
-			
-	 		        $res = $this->model->Query($STATEMENT);
-
-				 	 //checa errores de bd y detiene el proceso si existe alguno
-			        $CHK_ERROR =  $this->model->read_db_error();
-
-			        if ($CHK_ERROR!=''){ 
-
-	                    //BORRA LA TABLA DE LISTA DE PRECIOS CON EL ID ESPECIFICADO, ya que previamente se habia creado
-						//$DEL_STATEMENT = 'DELETE FROM '.$TABLE.' WHERE IDPRICE = "'.$priceid.'"';
-						//$res = $this->model->Query($DEL_STATEMENT);
-
-			        echo "<script>$(window).load(function(){ MSG_ERROR('".$CHK_ERROR."',0); });</script>"; 
-			          
-			          $OK = false;
-
-			        }else{
-
-                       $OK = TRUE;
-
-			        }
-			
-
-				$i=$i+1;
-	          }
-              
-              
-			}//termina el proceso de insercion
-
-		}
-
-       }
-
-	   if($OK == TRUE){ //SE EJECUTA SI LA LECTURA DEL ARCHIVO Y LA INSERCION DE DATOS EN BD FUE CORRECTA
-
-
-				if ($_POST['price_id'] != '') {//SI EL IDPRICE YA EXISTE
-					
-
-					$values  = array( 'IDPRICE' => $priceid ,
-						                  'DESCRIPTION' => $_POST['price_desc'] ,
-						                  'ID_compania' =>  $this->model->id_compania );
-
-					$res = $this->model->insert('PRI_LIST_ID',$values);
-                        
-                    //checa errores de bd y detiene el proceso si existe alguno
-			        $CHK_ERROR =  $this->model->read_db_error();
-
-			        if ($CHK_ERROR!=''){ 
-
-	                    //BORRA LA TABLA DE LISTA DE PRECIOS CON EL ID ESPECIFICADO, ya que previamente se habia creado
-						$DEL_STATEMENT = 'DELETE FROM '.$TABLE.' WHERE IDPRICE = "'.$priceid.'"';
-						$res = $this->model->Query($DEL_STATEMENT);
-
-			        echo "<script>$(window).load(function(){ MSG_ERROR('".$CHK_ERROR."',0); });</script>"; 
-			        
-			        }else{
-
-
-                    echo "<script>$(window).load(function(){ MSG_CORRECT('LA LISTA  SE HA CARGADO CON EXITO ',0); });</script>"; 
-
-			        }
-			        //checa errores de bd y detiene el proceso si existe alguno
-		                
-
-					}else{
-
-                     echo "<script>$(window).load(function(){ MSG_CORRECT('LA LISTA  SE HA CARGADO CON EXITO ',0); });</script>"; 
-
-					}
-
-
-
-		}
-
+	try {
 		
+		$TABLE = 'PRI_LIST_ITEM';
 
+
+		//INFORMACION  LISTA DE PRECIO
+				if ($_POST['price_list'] != '') {
+								
+							$priceid = trim($_POST['price_list']);
+
+							//elimino la lista de items para ese idprice
+							$DEL_STATEMENT = 'DELETE FROM '.$TABLE.' WHERE IDPRICE = "'.$priceid.'" AND ID_compania="'.$this->model->id_compania.'"';
+			                $res = $this->model->Query($DEL_STATEMENT);
+
+			               $this->CheckError();
+
+				}else{
+
+				    		$priceid = trim($_POST['price_id']);
+
+		                    //CHECA SI YA EXISTE EL ID PROPUESTO
+							$check_id = $this->model->Query('SELECT IDPRICE FROM PRI_LIST_ID WHERE IDPRICE ="'.$priceid.'"');
+
+							if($check_id!=''){//SI EXISTE INDICA ERROR y mata el proceso php
+
+			                
+				            die("<script>$(window).load(function(){ MSG_ERROR('EL ID DE LA LISTA DE PRECIO PROPUESTA YA EXISTE',0); });</script>");
+
+			                 }else{
+
+			                //elimino la lista de items para ese idprice
+							$DEL_STATEMENT = 'DELETE FROM '.$TABLE.' WHERE IDPRICE = "'.$priceid.'" AND ID_compania="'.$this->model->id_compania.'"';
+			                $res = $this->model->Query($DEL_STATEMENT);
+
+			                $this->CheckError();
+
+			                 }
+
+		        }
+
+				//INI LECTURA DE ARCHIVO EXCEL
+					$reader=new Spreadsheet_Excel_Reader();
+
+					$filename=$_FILES["price_file"]["tmp_name"];
+
+						if($_FILES["price_file"]["size"] > 0)
+						 {
+
+							$reader->setUTFEncoder('iconv');
+							$reader->setOutputEncoding('UTF-8');
+							$reader->read($filename);
+
+
+							 foreach($reader->sheets as $k=>$data)
+							 {
+					        
+
+								$i=1;
+								$values = array();
+								$STATEMENT = '';
+
+								 while ($i<=$data['numRows']){
+
+
+                                 if(sizeof($data['cells'][$i]) > 0){
+
+								     $values['1'] = $priceid;
+
+									foreach($data['cells'][$i] as $KEY=>$cell) 
+									{
+										   
+					                        if($cell !=''){
+					                   	
+											if ($KEY=='1')   	$values['2'] = utf8_encode($cell) ;
+											if ($KEY=='2')   	$values['3'] = utf8_encode($cell) ;
+											if ($KEY=='3')   	$values['4'] = utf8_encode($cell) ;
+											if ($KEY=='4')   	$values['5'] = utf8_encode($cell) ;      	
+
+					                        }
+									
+								    }
+
+								   $values['6'] = $this->model->id_compania;
+
+                           
+
+						             //INSERTA EN BD LA LINEA ACTUAL
+									  $STATEMENT= "INSERT INTO ".$TABLE." (
+											`IDPRICE`,
+											`IDITEM` ,
+											`DESCRIPTION` , 
+											`PRICE` ,
+											`UNIT`,
+											`ID_compania`)  
+											VALUES 
+											('".implode("','", $values)."');";
+								
+							
+					 		        $res = $this->model->Query($STATEMENT);
+
+				                  $this->CheckError();
+
+
+
+                                }
+
+								 	
+
+					
+                                   
+
+							
+
+								$i=$i+1;
+					          }
+				              
+				              
+							}//termina el proceso de insercion
+
+					}
+
+		        //SI IDPRICE EXISTE
+		    	if ($_POST['price_id'] != '') {
+							
+
+				    $values  = array(  'IDPRICE' => $priceid ,
+						               'DESCRIPTION' => $_POST['price_desc'] ,
+						               'ID_compania' =>  $this->model->id_compania );
+
+			    	$res = $this->model->insert('PRI_LIST_ID',$values);
+		           
+		           $this->CheckError();
+
+		           echo "<script>$(window).load(function(){ MSG_CORRECT('1 LA LISTA  SE HA CARGADO CON EXITO ',0); });</script>"; 
+			            
+
+				}else{
+
+		           echo "<script>$(window).load(function(){ MSG_CORRECT('2 LA LISTA  SE HA CARGADO CON EXITO ',0); });</script>"; 
+		     
+		      	}
+
+
+	} catch (Exception $e) {
+
+		 die("<script>$(window).load(function(){ MSG_ERROR('".$e->getMessage()."',0); });</script>"); 
+	}
 
 
 
 $_POST = array(); //limpia las variables de $_post
 $_FILES = array();
 
+
 }
+
+
 
 
 ?>

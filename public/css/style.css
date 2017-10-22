@@ -1,12 +1,18 @@
-  page[size="A4"] {
+
+
+/*print page*/
+
+ page[size="A4"] {
   background: white;
-  width: 21cm;
-  height: 29.7cm;
+  width: 21.59cm;
+  height: 27cm;
   display: block;
   margin: 0 auto;
   margin-bottom: 0.5cm;
   box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  font-size: 14px;
 }
+
 
 @media print {
 
@@ -59,16 +65,33 @@ select, input{
 }
 
 
-table {
- 
-    border: 1px solid #ddd !important;
+    .RGraph_tooltip {
+        font-size: 16pt !important;
+        font-weight: bold;
+        text-align: center;
+        padding: 15px;
+    }
+
+.columnHdr {
+
+text-align: left;
+
 }
 
+.logWindow {
 
+height: 300px;
+width: 100%;
+max-width: 100%;
+overflow-y: scroll;
+
+
+
+}
 
 .help-block{
 
-font-size: 9px;
+font-size: 10px;
 
 }
 
@@ -141,11 +164,10 @@ display: block;
 position: relative;
 height: 60%;
 padding: 15px;
-margin-bottom: 60px;
+margin-bottom: 10px;
 
 
-}
-
+}5
 
 .h_invoice_header{
 
@@ -163,7 +185,7 @@ margin-bottom: 0px;
 .tableInvDe,.tableReport, .tableInvoice th{
 
 text-align: left;
-font-size: 12px;
+font-size: 15px;
 
 }
 
@@ -174,24 +196,29 @@ visibility: hidden;
 
 }
 
+
+
 table , th{
 
-font-size: 10px;
+font-size: 15px;
 text-align: center;
+
 
 }
 
 table {
 
  border: 1px solid #ddd !important;
- white-space: nowrap;
+/* white-space: nowrap; */
+ table-layout: fixed;
+ word-wrap:break-word;
 
 }
 
 tbody {
 
 text-align: left;
-font-size: 12px;
+font-size: 15px;
 
 }
 
@@ -447,6 +474,12 @@ img .avatar {
 
 @media (max-width: 700px) { 
 
+table{
+
+table-layout: auto;
+
+}
+
 .page{ margin-top : 15%; }
 
 h2, h3{
@@ -594,11 +627,16 @@ div .menu_header{
 }
 
 /*nav*/
+.bigdrop{
 
+  width: 300px !important;
+
+}
 .select2-results {
 
  background-color: white;
 }
+
 
 
 /*LOADER SPIN*/
@@ -676,10 +714,27 @@ div .menu_header{
 
 }
 
+
 pre {
   height: 250px;
   overflow: auto; 
   display:none;
+}
+pre.code {
+    padding: 5px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    margin-top: 0;
+    margin-bottom: 40px;
+    overflow-x: auto;
+}
+
+pre.code span {
+    color: green;
+}
+
+pre.code span span {
+    color: red;
 }
 
 .graphcont {

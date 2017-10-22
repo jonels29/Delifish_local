@@ -269,10 +269,15 @@ if (strpos($value->{'Description'},'Lote')){
     $Description = trim($value->{'Description'});
    
 }else{ 
-    $uniP = number_format($value->{'Unit_Price'},4); 
-    $netdue = number_format($value->{'Net_line'},4); 
+
+    $uniP  = $this->numberFormatPrecision($value->{'Unit_Price'});
+
+    $netdue = $this->numberFormatPrecision($value->{'Net_line'});
+
+
     $Description = '<br>'.$value->{'Item_id'}.'<br>'.$value->{'Description'};
 }
+
 
 
 
@@ -310,13 +315,13 @@ echo $table;
        
                         <div class="col-xs-4"></div>
 						<div class="col-xs-6 panelB noMarginB panel-default"><div class="invoice-div3  panel-body">Sub Total</div></div>
-						<div class="col-xs-2 panelB noMarginB panel-default"><div class="invoice-div3  panel-body"><?php echo  $subtotal;?></div></div>
+						<div class="col-xs-2 panelB noMarginB panel-default"><div class="invoice-div3  panel-body"><?php echo   $this->numberFormatPrecision($subtotal);?></div></div>
 						<div class="col-xs-4"></div>
 						<div class="col-xs-6 panelB noMarginB panel-default"><div class="invoice-div3  panel-body">ITBMS</div></div>
-						<div class="col-xs-2 panelB noMarginB panel-default"><div class="invoice-div3  panel-body"><?php echo  $tax;?></div></div>
+						<div class="col-xs-2 panelB noMarginB panel-default"><div class="invoice-div3  panel-body"><?php echo  number_format($tax,2);?></div></div>
 						<div class="col-xs-4"></div>
 						<div class="col-xs-6 panelB noMarginB panel-default panel-heading"><div class="invoice-div3  panel-body">TOTAL </div></div>
-						<div class="col-xs-2 panelB noMarginB panel-default panel-heading"><div class="invoice-div3  panel-body"><?php echo  $total;?></div></div>
+						<div class="col-xs-2 panelB noMarginB panel-default panel-heading"><div class="invoice-div3  panel-body"><?php echo  $this->numberFormatPrecision($total); ?></div></div>
 
 
                         </div>

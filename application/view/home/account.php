@@ -21,6 +21,7 @@ $pass = md5($pass);
 
 $this->model->Query("INSERT INTO SAX_USER (name,lastname,email,pass,role) values ('".$name."','".$lastname."','".$mail."','".$pass."','".$role."')");
 
+$this->CheckError();
 ?>
     <script>
       alert('El registro se ha agredago con exito'); 
@@ -33,6 +34,17 @@ $this->model->Query("INSERT INTO SAX_USER (name,lastname,email,pass,role) values
 <?php } } ?>
 
 <script>
+
+ // ********************************************************
+// * Aciones cuando la pagina ya esta cargada
+// ********************************************************
+$(window).load(function(){
+
+$('#ERROR').hide();
+
+});
+	
+
 //TABLE OF ACCOUNT
   jQuery(document).ready(function($)
   {
@@ -44,11 +56,32 @@ $this->model->Query("INSERT INTO SAX_USER (name,lastname,email,pass,role) values
     });
 
 table.yadcf([
-{column_number : 0},
-{column_number : 1},
-{column_number : 2},
-{column_number : 3}
-]); 
+	
+{column_number : 0,
+ column_data_type: "html",
+ html_data_type: "text" ,
+ select_type: "select2",
+ select_type_options: { width: "100%" }
+
+},
+{column_number : 1,
+ select_type: "select2",
+ select_type_options: { width: "100%" }
+
+},
+{column_number : 2,
+ select_type: "select2",
+ select_type_options: { width: "100%" }
+
+},
+{column_number : 3,
+ select_type: "select2",
+ select_type_options: { width: "100%" }
+
+}],
+{cumulative_filtering: true, 
+filter_reset_button_text: false}
+);
 
 });
 //TABLE OF ACCOUNT
@@ -57,6 +90,11 @@ table.yadcf([
 <div class="page col-lg-12">
 
 <div  class="col-lg-12">
+
+<!--INI DIV ERRO-->
+<div id="ERROR" ></div>
+<!--INI DIV ERROR-->
+
 <!-- contenido -->
 <h2>Cuentas de usuarios</h2>
 <div class="title col-lg-12"></div>
@@ -145,7 +183,7 @@ table.yadcf([
   <!--lista de usuario-->
   <div id="menu2" class="tab-pane fade">
     <fieldset>
-	<table id="user" width='100%' class="table table-striped" cellspacing="0"  >
+	<table id="user" width='100%' class="table table-striped table-bordered" cellspacing="0"  >
 	<thead>
 	<tr>
 	<th width="15%">Nombra</th>

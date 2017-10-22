@@ -2,7 +2,7 @@
 
 <div  class="col-xs-12">
 <!-- contenido -->
-<h2>Historial de ventas</h2>
+<h2>Historial Ordenes de ventas/Pedidos</h2>
 <div class="title col-xs-12"></div>
 <div class="col-xs-12">
 

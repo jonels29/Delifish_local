@@ -24,7 +24,7 @@ echo $status;
 
 <div style="float: right; text-align:right;" class="crop col-xs-6">
 <img width="15px" src="img/Database.png" /><?php echo  '    '.$this->model->TestConexion(); ?>
-&nbsp&nbsp V_3.7.17
+&nbsp&nbspV_10.9.17
 </div>
 
 

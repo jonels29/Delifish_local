@@ -1,0 +1,227 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <link rel="stylesheet" href="demos.css" type="text/css" media="screen" />
+
+    <script src="../libraries/RGraph.svg.common.core.js" ></script>
+    <script src="../libraries/RGraph.svg.line.js" ></script>
+    
+
+    <title>RGraph demo: SVG Line charts that you could use in a dashboard</title>
+
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="SVG Line charts that you could use in a dashboard" />
+</head>
+<body>
+
+
+
+    <h1>SVG Line charts that you could use in a dashboard</h1>
+
+    <style>
+        div#charts{
+            position: relative;
+            background-color: black;
+            height: 250px;
+        }
+
+        div#charts div {
+            position: absolute;
+            top: 20px;
+            width: 300px;
+            height: 200px;
+        }
+    </style>
+
+    <div id="charts">
+        <div id="chart-container1"></div>
+        <div id="chart-container2"></div>
+        <div id="chart-container3"></div>
+    </div>
+
+
+
+        <div id="fb-root"></div>
+    <script>
+        function loadFB (d)
+        {
+            var js, fjs = document.getElementsByTagName('script')[0];
+            if (document.getElementById('facebook-jssdk')) {
+                return;
+            }
+            
+            js     = document.createElement('script');
+            js.id  = 'facebook-jssdk';
+            js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8";
+            
+            fjs.parentNode.insertBefore(js, fjs);
+        }
+        
+        
+        setTimeout(loadFB, 1500);
+    </script>
+    
+    <style>
+        div#sharePopup {
+            display: inline-block;
+            color: white;
+            z-index: 2;
+            min-width: 575px;
+            height: 40px;
+            margin-left: 50px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 1px -1px 2px #aaa;
+            background-color: rgba(0,0,0,0.75);
+            text-align: center;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+    
+        div#sharePopup span#label {
+            position: relative;
+            top: 5px;
+        }
+        
+        div#sharePopup div.fb-like {
+            text-align: center;
+            display: inline-block;
+            position: relative;
+            top: 4px;
+        }
+    </style>
+    
+    <div id="sharePopup">
+        <span id="label">If you like RGraph please share it:</span>
+        <span style="display: inline-block; min-width: 225px">
+            <div class="fb-like" data-href="https://www.facebook.com/rgraph" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+            <a href="javascript: null" onclick="window.open('http://www.twitter.com/share?url=https://www.rgraph.net&text=HTML5%20charts%20for%20the%20web%20with%20@_RGraph%20', 'twitter-sharer-window', 'top=50,left=50,width=700,height=300')"><img src="/images/twitter-60x20.png"  style="transform: translate(10px, 8px); box-shadow: 1px 1px 1px gray" border="0" /></a>
+        </span>
+    </div>
+
+    <script>
+        // The config is shared by aall three charts
+        config = {
+            gutterTop: 5,
+            gutterRight: 5,
+            gutterBottom: 5,
+            gutterLeft: 5,
+            xaxis: false,
+            yaxis: false,
+            yaxisScale: false,
+            linewidth: 2,
+            yaxisMax: 50,
+            backgroundGridVlines: false,
+            backgroundGridBorder: false,
+            colors: ['white'],
+            filled: true,
+            filledColors: ['gray'],
+            spline: true
+        };
+
+        line1 = new RGraph.SVG.Line({
+            id: 'chart-container1',
+            data: [8,7,5,6,8,9,8,7,5,7,11,15,14,16,15,19],
+            options: config
+        }).draw();
+
+        line2 = new RGraph.SVG.Line({
+            id: 'chart-container2',
+            data: [12,19,16,18,15,12,16,19,25,21,25,23,29,31,32,30],
+            options: config
+        }).draw();
+
+        line3 = new RGraph.SVG.Line({
+            id: 'chart-container3',
+            data: [10,15,16,18,14,19,15,13,14,16,18,15,18,14,15,18],
+            options: config
+        }).draw();
+    </script>
+
+
+
+    <p></p>
+
+    This goes in the documents header:
+    <pre class="code">
+&lt;script src="RGraph.svg.common.core.js"&gt;&lt;/script&gt;
+&lt;script src="RGraph.svg.line.js"&gt;&lt;/script&gt;
+</pre>
+    
+    Put this where you want the chart to show up:
+    <pre class="code">
+&lt;style&gt;
+    div#charts{
+        position: relative;
+        background-color: black;
+        height: 250px;
+    }
+
+    div#charts div {
+        position: absolute;
+        top: 20px;
+        width: 300px;
+        height: 200px;
+    }
+&lt;/style&gt;
+
+&lt;div id="charts"&gt;
+    &lt;div id="chart-container1"&gt;&lt;/div&gt;
+    &lt;div id="chart-container2"&gt;&lt;/div&gt;
+    &lt;div id="chart-container3"&gt;&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+
+    This is the code that generates the chart:
+    <pre class="code">
+&lt;script&gt;
+    <span>// The config is shared by aall three charts</span>
+    config = {
+        gutterTop: 5,
+        gutterRight: 5,
+        gutterBottom: 5,
+        gutterLeft: 5,
+        xaxis: false,
+        yaxis: false,
+        yaxisScale: false,
+        linewidth: 2,
+        yaxisMax: 50,
+        backgroundGridVlines: false,
+        backgroundGridBorder: false,
+        colors: ['white'],
+        filled: true,
+        filledColors: ['gray'],
+        spline: true
+    };
+
+    line1 = new RGraph.SVG.Line({
+        id: 'chart-container1',
+        data: [8,7,5,6,8,9,8,7,5,7,11,15,14,16,15,19],
+        options: config
+    }).draw();
+
+    line2 = new RGraph.SVG.Line({
+        id: 'chart-container2',
+        data: [12,19,16,18,15,12,16,19,25,21,25,23,29,31,32,30],
+        options: config
+    }).draw();
+
+    line3 = new RGraph.SVG.Line({
+        id: 'chart-container3',
+        data: [10,15,16,18,14,19,15,13,14,16,18,15,18,14,15,18],
+        options: config
+    }).draw();
+&lt;/script&gt;
+</pre>
+
+
+
+    
+    
+
+    <p>
+        <a href="./#svg">&laquo; Back</a>
+    </p>
+
+</body>
+</html>

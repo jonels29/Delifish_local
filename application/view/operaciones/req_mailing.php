@@ -1,4 +1,6 @@
-<?php   
+<?php 
+
+$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 
 
 //company
@@ -18,9 +20,8 @@ foreach ($comp as $value) {
 foreach ($ORDER as  $value) {
 
     $value = json_decode($value);
-            
 
-    $name = $this->model->Query_value('SAX_USER','name','Where ID="'.$value->{'USER'}.'"');
+    $name     =  $this->model->Query_value('SAX_USER','name','Where ID="'.$value->{'USER'}.'"');
     $lastname =  $this->model->Query_value('SAX_USER','lastname','Where ID="'.$value->{'USER'}.'"');
 
               
@@ -39,7 +40,7 @@ foreach ($ORDER as  $value) {
 
 <?php
 
-$message .='<h2 class="h_invoice_header" >Requisición</h2>
+$message .='<h2 class="h_invoice_header" >Requisicion</h2>
                  <table BORDER="1">
                     
                     <tr>
@@ -47,11 +48,11 @@ $message .='<h2 class="h_invoice_header" >Requisición</h2>
                       
                     </tr>
                     <tr>
-                      <th style="text-align:left;"><strong>Fecha:</strong>'.$date.'</th>
+                      <th style="text-align:left;"><strong>Fecha:</strong>'.$meses[date('n',strtotime($date))-1].' '.date(' j, Y',strtotime($date)).'</th>
                       
                     </tr>
                     <tr>
-                      <th style="text-align:left;"><strong>Responsable: </strong>'.$rep.'</th>
+                      <th style="text-align:left;"><strong>Solicitante: </strong>'.$rep.'</th>
                       
                     </tr>
 </table>
@@ -78,7 +79,7 @@ $message .='<h2 class="h_invoice_header" >Requisición</h2>
    <TH width="10%">Uni.</TH>
    <TH width="10%">Proyecto</TH>
    <TH width="10%">Fase</TH>
-   <TH width="10%">C. Costo</TH>
+   
     </TR>';
 
 foreach ($ORDER as  $value) { 
@@ -89,28 +90,33 @@ $value = json_decode($value);
 $message .= '<tr>
    <td width="15%" style="padding-right:10px; text-align: left;">'.$value->{'ProductID'}.'</td>
    <td width="35%" ">'.trim($value->{'DESCRIPCION'}).'</td>
-   <td width="10%" style="text-align: center; padding-right">'.number_format($value->{'CANTIDAD'},0).'</td>
+   <td width="10%" class="numb" style="text-align: center; padding-right">'.number_format($value->{'CANTIDAD'},2).'</td>
    <td width="10%" style="text-align: center; padding-right">'.$value->{'UNIDAD'}.'</td>
    <td width="10%" style="text-align: center; padding-right">'.$value->{'JOB'}.'</td>
    <td width="10%" style="text-align: center; padding-right">'.$value->{'PHASE'}.'</td>
-   <td width="10%" style="text-align: center; padding-right">'.$value->{'CCOST'}.'</td>
+   
    </tr>';
 
 }
 
 
-$message .= '</table>';
+$message .= '</table><BR><BR>';
 
+
+$message .= '<a href="'.URL.'index.php?url=ges_requisiciones/set_req_quota/'.$ref.'/'.$this->model->id_compania.'" type="button" id="cotizar" >INICIAR COTIZACION</a>';
 
 $message_to_send ='<html>
 <head>
 <meta charset="UTF-8">
-<title>Requisición de materiales</title>
+<title>Requisicion de materiales</title>
 </head>
 <body>'.$message.'</body>
 </html>';
 
-$mail->IsSMTP(); // enable SMTP
+
+
+
+$mail->IsMail(); // enable SMTP
 $mail->IsHTML(true);
 
 
@@ -160,17 +166,28 @@ if(!$mail->send()) {
    $alert .= 'Message could not be sent.';
    $alert .= 'Mailer Error: ' . $mail->ErrorInfo;
 
-     //echo '<script> alert("'.$alert.'"); </script>';
+  //echo '<script> alert("'.$alert.'"); </script>';
 
 } else {
+
   ECHO '1';
+
    // echo '<script> alert("Message has been sent"); </script>';
 }
+
+
+
+function get_string_between($string, $start, $end){
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
+}
+
 
 ?>
 
 </div>
 </div>
-
-
-

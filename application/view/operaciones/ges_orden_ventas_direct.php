@@ -45,7 +45,7 @@ var table = $("#table_ord_tb").DataTable({
 
       bSort: false,
 
-      responsive: true,
+      responsive: false,
 
       searching: false,
 
@@ -125,15 +125,17 @@ while(i <= cantLineas){
 
       var line_table_req = '<tr>'+reglon+
 
-      '<td width="15%" class="rowtable_req " contenteditable id="desc'+i+'"  ></td>'+
+      '<td width="15%" class="rowtable_req" onkeyup="checkArroba(this.id);" contenteditable id="desc'+i+'"  ></td>'+
 
-      '<td width="15%" class="rowtable_req" contenteditable id="nota'+i+'"  ></td>'+
+      '<td width="15%" class="rowtable_req" onkeyup="checkArroba(this.id);" contenteditable id="nota'+i+'"  ></td>'+
 
-      '<td width="3%"  class="rowtable_req" contenteditable id="unit'+i+'"></td>'+
+      '<input type="hidden"   id="unit'+i+'" />'+
+      '<td width="3%"  class="rowtable_req numb" onkeyup="checkArroba(this.id);" contenteditable ></td>'+
 
-      '<td width="3%"  class="rowtable_req" id="taxable'+i+'"></td>'+
+      '<input type="hidden"  id="taxable'+i+'" />'+
+      '<td width="3%"  class="rowtable_req numb" onkeyup="checkArroba(this.id);" contenteditable ></td>'+
 
-      '<td width="3%"  class="rowtable_req  numb" id="stock'+i+'"></td>'+
+      '<input type="hidden"  id="stock'+i+'" />'+
 
       '<td width="5%"  class="rowtable_req  numb" onfocusout="recalcular('+i+');" contenteditable id="qty'+i+'"></td>'+
 
@@ -193,17 +195,17 @@ $.ajax({
 
        document.getElementById(id_desc_field).innerHTML  = json.Description;
 
-       document.getElementById(id_unit_field).innerHTML  = json.UnitMeasure;
+       document.getElementById(id_unit_field).value  = json.UnitMeasure;
 
-       document.getElementById(id_stock_field).innerHTML  = json.QtyOnHand;
+       document.getElementById(id_stock_field).value  = json.QtyOnHand;
 
        if(json.TaxType == 1){
 
-        document.getElementById(id_taxable_field).innerHTML  = 'SI';
+        document.getElementById(id_taxable_field).value  = 'SI';
 
        }else{
 
-        document.getElementById(id_taxable_field).innerHTML  = 'NO';
+        document.getElementById(id_taxable_field).value  = 'NO';
 
        }
 
@@ -221,13 +223,13 @@ setTimeout(function(){
 
     }else{
 
-     document.getElementById(id_price_field).innerHTML  = '0.00';
+     document.getElementById(id_price_field).innerHTML  = '';
 
     }
 
     if(itemId==''){
 
-         document.getElementById(id_price_field).innerHTML  = '0.00';
+         document.getElementById(id_price_field).innerHTML  = '';
 
          recalcular(line);
 
@@ -291,13 +293,13 @@ $.ajax({
 
       if(res.trim()!=''){
 
-       document.getElementById( id_price_field ).innerHTML  = res;
+       document.getElementById( id_price_field ).innerHTML  = parseFloat(res).toFixed(4); ;
 
       }else{
 
        console.log('yes');
 
-       document.getElementById(id_price_field).innerHTML  = '0.00';
+       document.getElementById(id_price_field).innerHTML  = '';
 
        document.getElementById(id_price_field).setAttribute("contenteditable","");
 
@@ -360,30 +362,24 @@ UnitPrice = document.getElementById(PriceID).innerHTML;
 function calculate(line){
 
 qtyID = 'qty'+line;
-
 PriceID = 'unitprice'+line;
-
 totalID = 'total'+line;
-
 qty = document.getElementById(qtyID).innerHTML;
-
 UnitPrice = document.getElementById(PriceID).innerHTML;
 
 if(qty=='' || UnitPrice == ''){
 
 qty = 0;
-
 UnitPrice = 0;
 
 }
 
 total = qty * UnitPrice;
 
-document.getElementById(totalID).innerHTML = parseFloat(total).toFixed(5); 
-
+document.getElementById(totalID).innerHTML = parseFloat(total).toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]; 
 document.getElementById(qtyID).innerHTML =   parseFloat(qty).toFixed(5);
 
-document.getElementById(PriceID).innerHTML = parseFloat(UnitPrice).toFixed(4);
+//document.getElementById(PriceID).innerHTML = parseFloat(UnitPrice).toFixed(2);
 
 sumar_total();
 
@@ -392,19 +388,13 @@ sumar_total();
 function sumar_total(){
 
 var theTbl = document.getElementById('table_ord_tb'); //objeto de la tabla que contiene los datos de items
-
 var l = '';  
-
 var total = [];
-
 var itbms = [];
 
 subtotal_field = document.getElementById('subtotal');
-
 tax_field =      document.getElementById('tax');
-
 tax_value =      document.getElementById('saletaxid').value;
-
 total_field =    document.getElementById('total');
 
 for(var i=1; i<theTbl.rows.length ;i++) //BLUCLE PARA LEER LINEA POR LINEA LA TABLA theTbl
@@ -414,7 +404,7 @@ for(var i=1; i<theTbl.rows.length ;i++) //BLUCLE PARA LEER LINEA POR LINEA LA TA
   l = 1 + l; //contador de registros
 
   ITEMid = 'sel'+i;
-
+  taxableID = 'taxable'+i;
   ITEM_ID = '';
 
     for(var j=0;j<theTbl.rows[i].cells.length; j++) //BLUCLE PARA LEER CELDA POR CELDA DE CADA LINEA
@@ -423,14 +413,13 @@ for(var i=1; i<theTbl.rows.length ;i++) //BLUCLE PARA LEER LINEA POR LINEA LA TA
 
             switch (j){
 
-                   case 8:
+                   case 7:
 
                     //console.log(theTbl.rows[i].cells[3].innerHTML);
 
-                    if(theTbl.rows[i].cells[4].innerHTML=='SI'){
+                    if(document.getElementById(taxableID).value=='SI'){
 
-                    itbms_sum = ( Number(theTbl.rows[i].cells[j].innerHTML) * Number(theTbl.rows[i].cells[6].innerHTML) ) * Number(tax_value);
-
+                    itbms_sum = ( Number(theTbl.rows[i].cells[j].innerHTML) * Number(theTbl.rows[i].cells[5].innerHTML) ) * Number(tax_value);
                     itbms.push(itbms_sum);
 
                     }
@@ -446,7 +435,6 @@ for(var i=1; i<theTbl.rows.length ;i++) //BLUCLE PARA LEER LINEA POR LINEA LA TA
 }//FIN BLUCLE PARA LEER LINEA POR LINEA DE LA TABLA
 
 var subtotal  = 0;
-
 var TAX  = 0;
 
 for(var i=0; i<total.length; i++){
@@ -468,9 +456,7 @@ for(var i=0; i<itbms.length; i++){
     TOTAL = subtotal + TAX;
 
   subtotal_field.value = parseFloat(subtotal).toFixed(2);
-
   tax_field.value      = parseFloat(TAX).toFixed(2);
-
   total_field.value   =  parseFloat(TOTAL).toFixed(2);
 
 }
@@ -508,17 +494,25 @@ var link= URL+"index.php";
   $.ajax({
 
       type: "GET",
-
       url: link,
-
       data: datos,
+      success: function(res){
+        res = JSON.parse(res);
+        document.getElementById('listID').value = res.Custom_field4;
+        }
 
+   });
+
+
+var datos= "url=ges_ventas/GetPayTerm/"+ID;
+
+    $.ajax({
+      type: "GET",
+      url: link,
+      data: datos,
       success: function(res){
 
-        res = JSON.parse(res);
-
-        document.getElementById('listID').value = res.Custom_field4;
-
+        document.getElementById('termino_pago').value = res;
         }
 
    });
@@ -527,21 +521,7 @@ var link= URL+"index.php";
 
 }
 
-function set_selectItemStyle(){
 
-  //selectc con buscador 
-
-  $(".selectItems").select2({
-
-  placeholder: '',
-
-  allowClear: true,
-
-  maximumSelectionSize: 1
-
-  }); 
-
-}
 
 function mod_price_auth(){
 
@@ -600,6 +580,8 @@ function set_price_fields(){
     }
 
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -699,131 +681,177 @@ function set_price_fields(){
 
     <legend><h4>Informacion General</h4></legend>
 
-    <div class="col-lg-12"> 
-      
-      <div class="col-lg-6">
-        <fieldset>
-          <p><strong>Cliente</strong></p>
-             <select  id="customer" name="customer" class="select col-lg-8" onchange="sendval(this.value);" required>
+        <div class="col-lg-12"> 
 
-              <option selected disabled></option>
+           <div class="col-lg-6">
 
-              <?php  
-              $CUST = $this->model-> get_ClientList(); 
+           <fieldset>
 
-              foreach ($CUST as $datos) {
-                                        
-              $CUST_INF = json_decode($datos);
-              echo '<option value="'.$CUST_INF->{'ID'}.'" >('.$CUST_INF->{'CustomerID'}.' ) - '.$CUST_INF->{'Customer_Bill_Name'}."</option>";
+           <p><strong>Cliente</strong></p>
 
-              }
-              ?>
-                          
-            </select> 
-       </fieldset>
-      </div>
-       
-      <div class="col-lg-6">
-        <fieldset>
-        <p><strong>Representante de ventas</strong></p>          
-          <select  id="salesrep" name="salesrep" class="select col-lg-8"  required>
+            <select  id="customer" name="customer" class="select col-lg-8" onchange="set_listprice(this.value);" required>
 
             <option selected disabled></option>
 
             <?php  
-            $srep = $this->model-> get_SalesRepre(); 
 
-            foreach ($srep as $datos) {
-                                      
-            $srep_INF = json_decode($datos);
+            $CUST = $this->model-> get_ClientList(); 
 
+            foreach ($CUST as $datos) {
 
-            echo '<option value="'.$srep_INF->{'SalesRepID'}.'" >'.$srep_INF->{'SalesRep_Name'}."</option>";
+            $CUST_INF = json_decode($datos);
+
+            echo '<option value="'.$CUST_INF->{'ID'}.'" >'.$CUST_INF->{'CustomerID'}.' - '.$CUST_INF->{'Customer_Bill_Name'}."</option>";
 
             }
+
             ?>
-                        
-          </select> 
-        </fieldset>
-      </div>
 
-      <div class="separador col-lg-12"></div>
+         </select>  
 
-         <div class="col-lg-3" >
+         </fieldset>
+
+         </div>
+
+         <div class="col-lg-2" >
+
          <fieldset>
+
            <p><strong>Entrega a:</strong></p>
-            <input class="col-lg-12" id="entrega" name="entrega" />  
+
+            <input class="col-lg-12" id="entrega" onkeyup="checkNOTA(this.id);" name="entrega" />  
 
          </fieldset>
+
          </div>
-         <div class="col-lg-3" >
+
+        <div class="col-lg-2">
+
          <fieldset>
-             <p><strong>Tipo de Licitacion</strong></p>
-                <input class="col-lg-12" id="tipo_licitacion" name="tipo_licitacion"/> 
+
+          <p><strong>No. PO: </strong><p>
+
+            <input  class="col-lg-12" id="nopo" onkeyup="checkNOTA(this.id);" name="nopo"/>
+
          </fieldset>
-         </div>
 
-       
-         <div class="col-lg-3" >
-         <fieldset>
-             <p><strong>Terminos de pago</strong></p>
-               <input  class="col-lg-12" id="termino_pago" name="termino_pago" />
-         </fieldset>
-         </div>
-
-         <div class="col-lg-3" >
-           <fieldset>
-               <p><strong>Tax ID</strong></p>
-                 <select  id="taxid" name="taxid" class="select col-lg-12" onchange="set_taxid(this.value);" required>
-                   <?php  
-                    $tax = $this->model->Get_sales_conf_Info(); 
-
-                    foreach ($tax  as $datos) {
-                      $tax  = json_decode($datos);
-
-                      if($tax->{'taxid'}=='EXENTO'){
-
-                        $selected = 'selected';
-
-                      }else{   
-
-                         $selected = '';
-
-                      }
-                                      
-                    echo '<option value="'.$tax ->{'rate'}.'" '.$selected.'>'.$tax->{'taxid'}.'</option>';
-
-                    }?>
-              </select>
-          </fieldset>
-        </div>
-
-
-         <div class="col-lg-6" >
-           <fieldset>
-             <p><strong>Observaciones</strong></p>
-               <textarea class="col-lg-12"  rows="2" id="observaciones" name="observaciones"></textarea> 
-         </fieldset> 
-         </div>
-
-        <div class="col-lg-3">
-         <fieldset>
-            <div class="col-lg-12">
-                <strong>No. PO: </strong><input type="text"
-                 id="nopo" name="nopo"/><br>
-           </div>
-         </fieldset>
         </div> 
-<div class="col-lg-10"> </div>
+
+         <div class="col-lg-2" >
+
+         <fieldset>
+
+             <p><strong>Tipo de Licitacion</strong></p>
+
+                <input class="col-lg-12" id="tipo_licitacion" onkeyup="checkNOTA(this.id);" name="tipo_licitacion"/> 
+
+         </fieldset>
+
+         </div>
+
+         <div class="separador col-lg-12"></div>
+
+         <div class="col-lg-3" >
+
+         <fieldset>
+
+             <p><strong>Terminos de pago</strong></p>
+
+               <input  class="col-lg-12" id="termino_pago" onkeyup="checkNOTA(this.id);" name="termino_pago" readonly />
+
+         </fieldset>
+
+         </div>
+
+         <div class="col-lg-3" >
+
+         <fieldset>
+
+             <p><strong>Tax ID</strong></p>
+
+               <select  id="taxid" name="taxid" class="select col-lg-12" onchange="set_taxid(this.value,2);" required>
+
+            <?php  
+
+            $tax = $this->model->Get_sales_conf_Info(); 
+
+            foreach ($tax  as $datos) {
+
+              $tax  = json_decode($datos);
+
+              if($tax->{'taxid'}=='ITBMS'){
+
+                $selected = 'selected';
+
+              }else{   
+
+                 $selected = '';
+
+              }
+
+            echo '<option value="'.$tax ->{'rate'}.'" '.$selected.'>'.$tax->{'taxid'}.'</option>';
+
+            }
+
+            ?>
+
+           </select>
+
+         </fieldset>
+
+       </div>
+
+
+         <div class="col-lg-3" >
+
+         <fieldset>
+
+             <p><strong>Fecha de entrega</strong></p>
+
+               <input  class="col-lg-12" id="fecha_entrega" onkeyup="checkNOTA(this.id);" name="fecha_entrega" />
+
+         </fieldset>
+
+         </div>
+
+
+         <div class="col-lg-3" >
+
+         <fieldset>
+
+             <p><strong>Lugar de Depacho</strong></p>
+
+               <input  class="col-lg-12" id="lugar_despacho" onkeyup="checkNOTA(this.id);" name="lugar_despacho" />
+
+         </fieldset>
+
+         </div>
+
+         <div class="separador col-lg-12"></div>
+
+         <div class="col-lg-8" >
+
+           <fieldset>
+
+             <p><strong>Observaciones</strong></p>
+
+               <textarea class="col-lg-12" onkeyup="checkNOTA(this.id);"  rows="2" id="observaciones" name="observaciones"></textarea> 
+
+         </fieldset> 
+
+         </div>
+
+  </div>
+
+ <div class="separador col-lg-12"> </div>
+
+ <div class="col-lg-10"> </div>
 
   <div  class="col-lg-2">
 
        <input type="submit" onclick="send_order_2();" class="btn btn-primary  btn-sm btn-icon icon-right" value="Procesar" />
 
   </div>
-
-</div>
-
 
 </fieldset>
 
@@ -863,6 +891,13 @@ if($pice_mod_ck!=1){ ?>
 
       <th width="10%" >Item ID
 
+<!--       <select id="check_val" onchange="init(this.value);">
+
+      <option value="1" >Renglon</option>
+
+      <option value="2" >Codigo</option> 
+
+      </select> -->
 
       </th>
 
@@ -870,11 +905,9 @@ if($pice_mod_ck!=1){ ?>
 
       <th width="15%" class="text-center">Nota</th>
 
-      <th width="3%" class="text-center">Unidad</th>
+      <th width="3%"  class="text-center">Chico</th>
 
-      <th width="3%" class="text-center">Tax</th>
-
-      <th width="3%" class="text-center">Stock</th>
+      <th width="3%"  class="text-center">Grande</th>
 
       <th width="5%" class="text-center">Cant.</th>
 
@@ -914,11 +947,11 @@ if($pice_mod_ck!=1){ ?>
 
 <div class="col-lg-5" >
 
-  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="subtotal" name="subtotal"  value="0" readonly />
+  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="subtotal" name="subtotal"  value="0.00" readonly />
 
-  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="tax" name="tax" value="0" readonly/> 
+  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="tax" name="tax" value="0.00" readonly/> 
 
-  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="total" name="total" value="0" readonly />
+  <input class="col-lg-12"  style="text-align:right;" type="number"  step="0.01" id="total" name="total" value="0.00" readonly />
 
 </div>
 
@@ -994,7 +1027,6 @@ var arrLen = '';
 
 validacion();
 
-
 if(CHK_VALIDATION == true){ CHK_VALIDATION = false;  return;  }
 
 /////////////////////////////
@@ -1039,6 +1071,8 @@ var r = confirm('Desea procesar la orden?');
 
     var nopo=document.getElementById('nopo').value;
 
+    var fecha_entrega=document.getElementById('fecha_entrega').value;
+
     var Subtotal=$("#subtotal").val();
 
     var total=   $("#total").val();
@@ -1047,6 +1081,7 @@ var r = confirm('Desea procesar la orden?');
 
     var TaxID=$("#taxid option:selected").html();  //ultimo cambio
 
+    var LugDesp = document.getElementById('lugar_despacho').value;
     //REGITRO DE CABECERA
 
     function set_header(){
@@ -1054,6 +1089,8 @@ var r = confirm('Desea procesar la orden?');
     //INI REGISTRO DE CABECERA
 
     //METODO EN BRIDGE_QUERY
+
+
 
     var datos= "url=bridge_query/set_sales_order_header/"+CustomerID+
 
@@ -1075,7 +1112,13 @@ var r = confirm('Desea procesar la orden?');
 
                 '/'+Ordertax+
 
-                '/'; //AQUI DEBE IR SALESREPID
+                '/'+fecha_entrega+
+
+                '/'+LugDesp+
+
+                '/';
+
+console.log(datos);
 
       return  $.ajax({
 
@@ -1192,6 +1235,7 @@ while (i <= cantLineas){
         {
 
         var selid = "sel"+i;
+        var unitid = 'unit'+i;
 
         if(document.getElementById(selid).value !=''){
 
@@ -1199,37 +1243,34 @@ while (i <= cantLineas){
 
                        case 7:
 
-                            UnitMeasure = theTbl.rows[i].cells[3].innerHTML;
 
+                            
+                            itemId      = document.getElementById(selid).value;
+                            desc        = theTbl.rows[i].cells[1].innerHTML;
                             nota        = theTbl.rows[i].cells[2].innerHTML;
+                            UnitMeasure = document.getElementById(unitid).value;
 
-                            itemId = document.getElementById(selid).value;
+                            qty       = theTbl.rows[i].cells[5].innerHTML;
+                            UnitPrice = theTbl.rows[i].cells[6].innerHTML;
+                            total     = theTbl.rows[i].cells[7].innerHTML;
 
-                            qty       = theTbl.rows[i].cells[6].innerHTML;
-                            UnitPrice = theTbl.rows[i].cells[7].innerHTML;
-                            total     = theTbl.rows[i].cells[8].innerHTML;
+                            chic  = theTbl.rows[i].cells[3].innerHTML;
+                            gran  = theTbl.rows[i].cells[4].innerHTML;
 
-                            cell += nota+'@'+UnitMeasure+'@'+itemId+'@'+UnitPrice+'@'+qty+'@'+total;//agrego el registo de las demas columnas
+                            cell += desc+'@'+nota+'@'+UnitMeasure+'@'+itemId+'@'+UnitPrice+'@'+qty+'@'+total+'@'+chic+'@'+gran;//agrego el registo de las demas columnas
+
+                          break;
 
                        default: 
 
-                          if(j!=0 ){
+                          val= theTbl.rows[i].cells[0].innerHTML;
 
-                            val= theTbl.rows[i].cells[j].innerHTML;
+                          if(val==''){                              
 
-                            //SI LA CELDA NO CONTIENE VALOR 
-                            
-                           if(j!=2){//excluye la columna 2 de la verificacion
+                                    FaltaArray[j] = i ;
 
-                               if(val==''){                                  
+                                 }
 
-                                  FaltaArray[j] = i ;
-
-                               }
-
-                            } 
-
-                            }
 
                              break;
 
@@ -1285,13 +1326,7 @@ function FIND_COLUMN_NAME(item){
 
 switch (item){
 
-  case 0: val ='ITEM ID'; break;
-
-  case 2: val ='NOTA'; break;
-
-  case 3: val ='UNIDAD'; break;
-
-  case 4: val ='CANTIDAD'; break;
+  case 1: val ='Descripcion'; break;
 
 }
 
@@ -1307,7 +1342,7 @@ function msg(link,SalesOrderNumber){
 
           if(R==true){
 
-                 window.open(link+'?url=ges_ventas/ges_print_salesorder/'+SalesOrderNumber,'_self');
+                 window.open(link+'?url=ges_ventas/ges_print_OrdEmpaque/'+SalesOrderNumber,'_self');
 
           }else{
 

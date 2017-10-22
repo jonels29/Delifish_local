@@ -812,7 +812,7 @@ if(CHK_VALIDATION == true){ CHK_VALIDATION = false;  return;  }
           //REGITRO DE CABECERA
             function set_header(){
 
-                var datos= "url=bridge_query/set_sales_order_header/"+CustomerID+'/'+Subtotal+'/'+TaxID+'/'+total+'/'+user+'/'+nopo+'/'+termino_pago+'/'+tipo_licitacion+'/'+observaciones+'/'+entrega+'/'+Ordertax+'/'+salesrepre;
+                var datos= "url=bridge_query/set_sales_order_header/"+CustomerID+'/'+Subtotal+'/'+TaxID+'/'+total+'/'+user+'/'+nopo+'/'+termino_pago+'/'+tipo_licitacion+'/'+observaciones+'/'+entrega+'/'+Ordertax+'//'+salesrepre;
 
                 var link= URL+"index.php";
 

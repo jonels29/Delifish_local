@@ -1,5 +1,6 @@
 <?php 
 
+
 if($_POST['save']){
 
 
@@ -14,13 +15,15 @@ define('DB_HOST', '".$_POST['host']."');\n
 define('DB_NAME', '".$_POST['dbname']."');\n
 define('DB_USER', '".$_POST['user']."');\n
 define('DB_PASS', '".$_POST['pass']."');\n
-define('DB_CHARSET', 'utf8'); ?>";
+define('UTC', '".$_POST['UTC']."');\n
+define('DB_CHARSET', 'utf8');\n ?>";
 
 fwrite ($valuesfile, $file) or die('fwrite failed '.var_dump(error_get_last()));
-fclose($valuesfile);
+fclose ($valuesfile);
 
-header('location: index.php');
 
+
+ echo '<script>self.location ="index.php?url=home/index";</script>';
 
 }
 
@@ -79,6 +82,17 @@ header('location: index.php');
 		<input type="password" class="form-control" id="pass" name="pass" value="<?php echo DB_PASS; ?>"  />
 
 		</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-lg-3 control-label" >UTC</label>
+		<div class="input-group col-lg-2">
+
+
+		<input type="text" class="form-control" id="UTC" name="UTC" value="<?php echo UTC; ?>"  />
+
+		</div>
+
 		</div>
         <div class="col-lg-6"></div>
 	    <div class="input-group col-lg-2">

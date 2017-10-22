@@ -13,11 +13,19 @@ if($value->{'mod_fact'}=='1'){ $mod_fact_CK  = 'checked'; }else{ $mod_fact_CK = 
 if($value->{'mod_invt'}=='1'){ $mod_invt_CK = 'checked'; }else{ $mod_invt_CK  = '';  }
 if($value->{'mod_rept'}=='1'){ $mod_rept_CK = 'checked'; }else{ $mod_rept_CK = '';  }
 if($value->{'mod_stock'}=='1'){ $mod_stoc_CK = 'checked'; }else{ $mod_stoc_CK = '';  }
-
+if($value->{'mod_req'}=='1'){ $mod_req_CK = 'checked'; }else{ $mod_req_CK = '';  }
 }
 ?>
 
+<!--ADD JS FILE-->
+<script  src="<?php echo URL; ?>js/operaciones/reporte/rep_reportes.js" ></script>
+
+
 <div class="page col-xs-12">
+
+<!--INI DIV ERRO-->
+<div id="ERROR" ></div>
+<!--INI DIV ERROR-->
 
 <div  class="col-xs-12">
 <!-- contenido -->
@@ -41,13 +49,25 @@ if($value->{'mod_stock'}=='1'){ $mod_stoc_CK = 'checked'; }else{ $mod_stoc_CK = 
            <option  value="ConList" >CONSIGNACIONES</option>
            <option  value="ReqStat" >REQUISICIONES</option>
            </optgroup>
-<?php } ?>     
-<?php   if($mod_fact_CK  == 'checked'){  ?>         
+<?php } ?>    
+<?php   if($mod_req_CK  == 'checked'){?>          
+           <optgroup label="Requisiciones">
+       <?php if($this->model->rol_campo=='1' || $this->model->rol_compras=='1' ){ ?>
+           <option  value="ReqStat" >REQUISICIONES</option>
+       <?php } 
+           if($this->model->rol_compras=='1' ){
+       ?>
+           <option  value="PurOrd"  >ORDENES DE COMPRA</option>
+        <?php  } ?>
+           </optgroup>
+<?php } ?>    
+<?php   if($mod_fact_CK  == 'checked'){
+             if($this->model->rol_compras=='1' ){  ?>         
            <optgroup label="Compras">
            <option  value="PurFact" >FACTURAS DE COMPRA</option>
            <option  value="PurOrd"  >ORDENES  DE COMPRA</option>
            </optgroup>
-<?php } ?>  
+<?php } }?>  
 
 <?php   if($mod_sales_CK  == 'checked'){  ?> 
            <optgroup label="Ventas">
@@ -91,7 +111,7 @@ if($value->{'mod_stock'}=='1'){ $mod_stoc_CK = 'checked'; }else{ $mod_stoc_CK = 
   <label>Limitar</label>
     <div class='col-lg-12'>
      
-     <input class='numb' type="number" min="1" max="50000" id="limit" value="1000" required/>
+     <input class='numb' type="number" min="1" max="50000" id="limit" value="10000" required/>
      <p class="help-block">Maximo de 50000 registros</p>
     </div>
   </div>
@@ -114,139 +134,106 @@ if($value->{'mod_stock'}=='1'){ $mod_stoc_CK = 'checked'; }else{ $mod_stoc_CK = 
 
  
 </fieldset> 
+
+<div class="separador col-lg-12"></div>
+
+<!-- Modal : VENTANA EMERGENTE QUE PERMITE MODIFICAR UN ITEM ESPECIFICO-->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 >Modificar Item</h3>
+      </div>
+
+      <div class="col-lg-12 modal-body">
+        
+      <div id='prod'></div>
+
+        <div class="col-lg-3" > 
+             <label class="control-label">ID Item: </label>
+             <input  class="form-control" id="item_id_modal" name="item_id_modal"  readonly/>
+             <input type="hidden" class="form-control" id="PL_id" name="PL_id"/>
+        </div>
+        
+        <div class="col-lg-2" > 
+             <label class="control-label">Precio: </label>
+             <input type="number" class="form-control numb" id="price_id_modal" name="price_id_modal"/>
+        </div>
+        <div class="col-lg-2" > 
+             <label class="control-label">Unidad: </label>
+             <input  class="form-control" id="unit_id_modal" name="unit_id_modal" readonly/>
+        </div>
+
+        <div class="form-group col-lg-5" > 
+              <label class="control-label" >Descripcion:</label>
+              <input class="form-control col-lg-10" id="desc_id_modal" name="desc_id_modal"/>
+        </div> 
+        
+
+<div class="col-lg-12" ></div>    
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="mod_item();" class="btn btn-primary" data-dismiss="modal">Modificar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="separador col-lg-12"></div>
 
 
-<script type="text/javascript">
-  
-function Filtrar(){
+<!-- Modal : VENTANA EMERGENTE QUE PERMITE MODIFICAR UN ITEM ESPECIFICO-->
+<div id="modal_additem" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 >Agregar Item</h3>
+      </div>
 
-var limit = $('#limit').val();
-var sort =  $('#sort').val();
-var type =  $('#reportType').val();
-var date1 = $('#date1').val();
-var date2 = $('#date2').val();
+      <div class="col-lg-12 modal-body">
+        
+      <div id='prod'></div>
 
+        <div class="col-lg-3" > 
+             <label class="control-label">ID Item: </label>
+             <input  class="form-control" id="item_id_modal_2" name="item_id_modal_2"  type="text" />
+             <input type="hidden" class="form-control" id="PL_id_2" name="PL_id_2"/>
+        </div>
+        
+        <div class="col-lg-2" > 
+             <label class="control-label">Precio: </label>
+             <input type="number" class="form-control numb" id="price_id_modal_2" name="price_id_modal_2"/>
+        </div>
+        <div class="col-lg-2" > 
+             <label class="control-label">Unidad: </label>
+             <input class="form-control" id="unit_id_modal_2" name="unit_id_modal_2" />
+        </div>
 
+        <div class="form-group col-lg-5" > 
+              <label class="control-label" >Descripcion:</label>
+              <input class="form-control col-lg-10" id="desc_id_modal_2" name="desc_id_modal_2"/>
+        </div> 
+        
 
-URL = document.getElementById('URL').value;
+<div class="col-lg-12" ></div>    
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="add_item();" class="btn btn-primary" data-dismiss="modal">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
 
-var datos= "url=bridge_query/get_report/"+type+"/"+sort+"/"+limit+"/"+date1+"/"+date2;   
-var link = URL+"index.php";
+  </div>
+</div>
 
-
-$('#table').html('<P>CARGANDO ...</P>');
-
-  $.ajax({
-      type: "GET",
-      url: link,
-      data: datos,
-      success: function(res){
-      
-       $('#table').html(res);
-
-       // alert(res);
-
-        }
-   });
-
-
-
-}
-
-function get_OC(id){
-
-  URL = document.getElementById('URL').value;
-
-var datos= "url=bridge_query/get_PO_details/"+id;  
-var link = URL+"index.php";
-
-
-
-
-  $.ajax({
-      type: "GET",
-      url: link,
-      data: datos,
-      success: function(res){
-      
-       $('#table2').html(res);
-
-       // alert(res);
-
-        }
-   });
-
-
-}
-
-function get_PL(id_PL,date,Desc) {
-
-URL = document.getElementById('URL').value;
-
-var datos= "url=bridge_query/get_PL_details/"+id_PL+"/"+date+"/"+Desc;  
-var link = URL+"index.php";
-
-
-
-
-  $.ajax({
-      type: "GET",
-      url: link,
-      data: datos,
-      success: function(res){
-        console.log(datos);
-      
-       $('#table3').html(res);
-
-       // alert(res);
-
-        }
-   });
-
-
-
-}
-
-
-function del_PL(id_PL) {
-
-/*var id=document.getElementById("user_2").value;
-var name = document.getElementById("name2").value;
-var lastname =  document.getElementById("lastname2").value;
-*/
-
-var datos = 'url=bridge_query/del_PL_detail/'+id_PL;
-var link = URL+"index.php";
-
-var r = confirm('Este seguro de eliminar definitivamente la Lista de Precio '+id_PL+' ?');
-
-if(r==true){
-
-$.ajax({
-type: 'GET',
-url: link,
-data: datos,
-success: function(dat){
-
- alert('La Lista de Precio se ha eliminado exitosamente.'); 
-
-location.reload(true);
-/*history.go(-1); 
-return true;*/
-
-}
-
-
-});
-
-
-}
-
-}
-
-</script>
 
 <fieldset>
 <div class="col-lg-12" > 

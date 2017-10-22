@@ -17,6 +17,9 @@ class Model
      public  $active_user_almacen  = null;
      public  $id_compania = null;
      public  $sage_connected = null;
+     public  $role_compras = null;
+     public  $role_campo = null;
+      
 
 
 
@@ -102,31 +105,32 @@ return $connected;
     /**
      * Query STATEMEN, DEVUELVE JSON
      */
-        public function Query($query){
-        //$this->verify_session();
+  public function Query($query){
+      //  $this->verify_session();
             
         $ERROR = '';
        
         $i=0;
+        $res ='';
+    
+        $res = $this->connect($query);
 
-         $res = $this->connect($query);
 
-        if($res=='0'){
+        if(mysqli_error($this->db)){
          
-          $ERROR['ERROR'] = date("Y-m-d h:i:sa").','.mysqli_error($this->db).','.$query;
+          $ERROR['ERROR'] = date("Y-m-d h:i:sa").','.str_replace("'", " ", mysqli_error($this->db));
 
           file_put_contents("LOG_ERROR/TEMP_LOG.json",json_encode($ERROR),FILE_APPEND);
 
-          file_put_contents("LOG_ERROR/ERROR_LOG.log",'/SAGEID-'.$this->id_compania.'/'.date("Y-m-d h:i:sa").'/'.$this->active_user_name.''.$this->active_user_lastname.'/'.mysqli_error($this->db).'/'.$query."\n",FILE_APPEND);
+          file_put_contents("LOG_ERROR/ERROR_LOG.txt","\n".date("Y-m-d h:i:sa").'- SAGEID-'.$this->id_compania.'/'.mysqli_error($this->db)."\n/".$query,FILE_APPEND);
 
-          die(mysqli_error($this->db));
           
         }else{
+
              file_put_contents("LOG_ERROR/TEMP_LOG.json",''); //LIMPIO EL ARCHIVO
 
              $columns = mysqli_fetch_fields($res);
          
-
         
              while ($datos=  mysqli_fetch_assoc($res)) {
                  
@@ -150,13 +154,13 @@ return $connected;
         }
 
         
-        $this->close();
-        }
+//$this->close();
+}
 ////////////////////////////////////////////////////////////////////////////////////////
     /**
      * UPDATE STATEMEN
      */
-    public function update($table,$columns,$clause){
+public function update($table,$columns,$clause){
 
 
     $whereSQL = '';
@@ -188,10 +192,7 @@ return $connected;
     $res = $this->Query($query);
 
 
-    $this->close();
-    return $res;
-
-    }
+}
 ////////////////////////////////////////////////////////////////////////////////////////
     /**
      * QUERY QUE DEVUELVE UN SOLO VALOR CONSULTADO
@@ -223,7 +224,6 @@ $columns= mysqli_fetch_fields($res);
 
 //echo $column_value;
 return  $column_value;
-$this->close();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -241,24 +241,37 @@ $query= "INSERT INTO ".$table." (`".implode('`,`', $fields)."`) VALUES ('".implo
 
 $insert = $this->Query($query);
 
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
 public function read_db_error(){
-    $string = file_get_contents("LOG_ERROR/TEMP_LOG.json");
-    $json_a = json_decode($string, true);
-    $R_ERRORS = '';
 
-    $R_ERRORS .= $json_a->{'ERROR'}; 
+
+    $string = file_get_contents("LOG_ERROR/TEMP_LOG.json");
+    $json_a = json_decode($string, true);   
+    $R_ERRORS = '';
+    $R_ERRORS .= $json_a['ERROR']; 
 
 
 
     file_put_contents("LOG_ERROR/TEMP_LOG.json",''); //LIMPIO EL ARCHIVO
 
+   $R_ERRORS = str_replace(',', '  ', $R_ERRORS);
+
+
+
+
+   echo $R_ERRORS;
    return $R_ERRORS ;
 
 }
+
+
+
+
 
     /**
      * delete
@@ -305,7 +318,6 @@ foreach ($res as $value) {
     $lastname= $value->{'lastname'};
     $role=$value->{'role'};
     $pass=$value->{'pass'};
-
     $rol_compras=$value->{'role_purc'};
     $rol_campo  =$value->{'role_fiel'};
 }
@@ -424,12 +436,23 @@ public function set_login_parameters(){
         $this->active_user_role = $_SESSION['ROLE'] ;
         $this->active_user_almacen = $_SESSION['ALMACEN'];
         $this->id_compania = $this->Query_value('CompanySession','ID_compania','ORDER BY LAST_CHANGE DESC LIMIT 1');
+        $this->rol_compras = $_SESSION['ROLE1'];
+        $this->rol_campo   = $_SESSION['ROLE2'];
         //$active_user_pass = $_SESSION['PASS'] ;
         
     }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
+
+public function GetLocalTime($dateIn){
+
+
+$date  = strtotime($dateIn.' '.UTC);
+$dateOut = date("Y-m-d H:i:s",  $date);
+
+return $dateOut;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -634,7 +657,7 @@ $order = $this->Query_value('Purchase_Header_Imp','TransactionID','where ID_comp
 
 //$NO_ORDER = str_pad($NO_ORDER, 7 ,"0",STR_PAD_LEFT);
 
-$NO_ORDER = number_format((int)$order+1);
+$NO_ORDER = number_format($order, 0 , '', '')+1;
 $NO_ORDER = str_pad($NO_ORDER, 9 ,"0",STR_PAD_LEFT);
 
 
@@ -656,7 +679,33 @@ $order = $this->Query_value('SalesOrder_Header_Imp','SalesOrderNumber','where ID
 list($ACI , $NO_ORDER) = explode('-', $order);
 
 
-$NO_ORDER = number_format((int)$NO_ORDER+1);
+
+$NO_ORDER = number_format($NO_ORDER , 0 , '', '')+1;
+//$NO_ORDER = str_pad($NO_ORDER, 7 ,"0",STR_PAD_LEFT);
+
+//echo  $NO_ORDER.'<br>';
+
+$NO_ORDER = 'ACI-'.$NO_ORDER;
+
+if($NO_ORDER < '1'){
+
+    $NO_ORDER=0;
+    $NO_ORDER = 'ACI-'.$NO_ORDER;
+   // $NO_ORDER = str_pad($NO_ORDER, 7 ,"0",STR_PAD_LEFT);
+
+}
+
+return $NO_ORDER; 
+}
+
+public function Get_NC_No(){
+
+$order = $this->Query_value('CREDITNOTE_HEADER','CreditNoteNumber','where ID_compania="'.$this->id_compania.'" ORDER BY ID DESC LIMIT 1');
+
+list($ACI , $NO_ORDER) = explode('-', $order);
+
+
+$NO_ORDER = number_format($NO_ORDER, 0 , '', '')+1;
 //$NO_ORDER = str_pad($NO_ORDER, 7 ,"0",STR_PAD_LEFT);
 
 $NO_ORDER = 'ACI-'.$NO_ORDER;
@@ -668,8 +717,6 @@ if($NO_ORDER< '1'){
    // $NO_ORDER = str_pad($NO_ORDER, 7 ,"0",STR_PAD_LEFT);
 
 }
-
-
 
 return $NO_ORDER; 
 }
@@ -956,14 +1003,13 @@ return $get_inv_qty;
 
 ////////////////////////////////////////////////////
 //Req to print
-public function get_req_to_print($id){
-
+public function get_req_to_print($id,$comp){
 
 $sql='SELECT * FROM `REQ_HEADER` 
 inner join REQ_DETAIL ON REQ_HEADER.NO_REQ = REQ_DETAIL.NO_REQ
 WHERE 
-REQ_HEADER.ID_compania="'.$this->id_compania.'" AND  
-REQ_DETAIL.ID_compania="'.$this->id_compania.'" and 
+REQ_HEADER.ID_compania="'.$comp.'" AND  
+REQ_DETAIL.ID_compania="'.$comp.'" and 
 REQ_HEADER.NO_REQ="'.$id.'" and 
 REQ_DETAIL.NO_REQ="'.$id.'"';
 
@@ -1116,6 +1162,37 @@ $res = $this->Query($query);
 
 
 return $res;
+}
+
+
+////////////////////////////////////////////////////
+//Trae Detalle de clientes
+
+public function get_Cust_info_int($custid){
+
+$query = 'SELECT * FROM Customers_Exp WHERE ID="'.$custid.'";';
+
+$res = $this->Query($query);
+
+return $res[0];
+
+}
+
+public function Get_User_Name($id){
+
+$USER = $this->Get_User_Info($id);
+         
+         foreach ($USER as $user ){
+
+            $user = json_decode($user);
+
+            $USERNAME = $user->{'name'}.' '.$user->{'lastname'};
+
+         }
+
+return $USERNAME;
+
+
 }
 
 }

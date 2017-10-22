@@ -1,32 +1,55 @@
-<script type="text/javascript">
+<!--INI DIV ERRO-->
+<div id="ERROR" ></div>
 
- // ********************************************************
-// * Aciones cuando la pagina ya esta cargada
-// ********************************************************
-$(window).load(function(){
+<!--ERROR -->
 
-$('#ERROR').hide();
+<div id="ErrorModal" class="modal fade" role="dialog">
 
-});
-	
-$(document).ready(function() {
-    if (location.hash) {
-        $("a[href='" + location.hash + "']").tab("show");
-    }
-    $(document.body).on("click", "a[data-toggle]", function(event) {
-        location.hash = this.getAttribute("href");
-    });
-});
+  <div class="modal-dialog modal-lg">
 
-$(window).on("myTab", function() {
-    var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
-    $("a[href='" + anchor + "']").tab("show");
-});
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <button type="button" onclick="javascript:history.go(-1);" class="close" data-dismiss="modal">&times;</button>
+        <h3 >Error</h3>
+      </div>
+
+      <div class="col-lg-12 modal-body">
+
+      <!--ini Modal  body-->  
+
+            <div id='ErrorMsg'></div>
+
+      <!--fin Modal  body-->
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" onclick="javascript:history.go(-1); return true;" data-dismiss="modal" class="btn btn-primary" >OK</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--modal-->
+<!--INI DIV ERROR-->
 
 
-</script>
 
- <?php
+<!--ADD JS FILE-->
+<script  src="<?php echo URL; ?>js/operaciones/home/config_sys.js" ></script>
+
+
+<?php
+
+echo '<script>console.log("'.$_REQUEST['addPrint'].'");</script>';
+
 
  if (isset($_REQUEST['smtp'])) {
 
@@ -39,11 +62,12 @@ $value  = array(
 'PASSWORD' => $_REQUEST['emailpass'],
 'Auth' => 'true',
 'SMTPSecure' => 'false',
-'SMTPDebug' => '');
+'SMTPDebug' => '0');
 
 $this->model->Query('DELETE from CONF_SMTP;');
 
 $this->model->insert('CONF_SMTP',$value);
+$this->CheckError();
 
 unset($_REQUEST);
 
@@ -97,7 +121,9 @@ echo '<script> alert("Se ha actualizado con exito"); window.open("'.URL.'index.p
 
 //ACTUALIZA DATOS DE COMPAÑIA 
 if (isset($_REQUEST['comp'])) {
-	
+
+$this->model->delete('company_info','');
+
 $value  = array(
 'company_name' => $_POST['company'],
 'email' => $_POST['email_contact'],
@@ -105,7 +131,8 @@ $value  = array(
 'Tel' => $_POST['tel1'],
 'Fax' => $_POST['tel2'] );
 
-$this->model->update('company_info',$value,'Where id="1";');
+$this->model->insert('company_info',$value);
+$this->CheckError();
 
 unset($_REQUEST);
 
@@ -124,6 +151,7 @@ $value  = array(
 
 
 $this->model->INSERT('sale_tax',$value,'Where id="1";');
+$this->CheckError();
 
 echo '<script> alert("El nuevo Tax se ha agregado con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
 
@@ -131,8 +159,36 @@ echo '<script> alert("El nuevo Tax se ha agregado con exito","ok"); window.open(
 }
 
 
+//AGREGA DATOS DE IMPRESORA FISCAL
+if (isset($_REQUEST['addPrint'])) {
+
+$value  = array(
+	'SERIAL' => $_POST['serial'],
+	'DESCRIPCION' => $_POST['printdesc']
+ );
+
+
+$this->model->INSERT('INV_PRINT_CONF',$value);
+$this->CheckError();
+
+echo '<script> alert("Se ha agredo con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
+
+
+
+}
+
 //actualizo info de modulos
 if(isset($_REQUEST['mod'])){
+
+		if($_POST['mod_invo']==true){
+
+		$mod_invo = '1';
+
+		}else{
+
+		$mod_invo = '0';	
+
+		}
 
 
 	if($_POST['mod_sales']==true){
@@ -189,19 +245,33 @@ if(isset($_REQUEST['mod'])){
 		$mod_pro = '0';	
 
 		}
+   
+   	if($_POST['mod_req']==true){
+
+		$mod_req = '1';
+
+		}else{
+
+		$mod_req = '0';	
+
+		}
 
 
 $value = array(
 	'mod_sales' => $mod_sales,
+	'mod_invo'  => $mod_invo,
 	'mod_fact'  => $mod_fact,
 	'mod_invt'  => $mod_invt,
 	'mod_rept'  => $mod_rept,
 	'mod_stock' => $mod_stock,
-	'mod_pro'   => $mod_pro);
+	'mod_pro'   => $mod_pro,
+	'mod_req'   => $mod_req);
 
 
 $this->model->delete('MOD_MENU_CONF','');
 $this->model->insert('MOD_MENU_CONF',$value);
+$this->CheckError();
+
 
 echo '<script> alert("Se ha actualizado los detalles con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
 
@@ -233,6 +303,8 @@ if($chk_cur_val!=''){
 }else{
  $this->model->insert('FAC_DET_CONF',$values);
 }
+$this->CheckError();
+
 
 echo '<script> alert("Se ha actualizado los detalles con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
 
@@ -247,6 +319,8 @@ $cta_gl_cxp = $_POST['cta_gl_cxp'];
 $cta_gl_pur = $_POST['cta_gl_pur'];
 $cta_gl_tax = $_POST['cta_gl_tax'];
 $cta_gl_acct = $_POST['Glacct'];
+$cta_gl_aract = $_POST['ARACNT'];
+$cta_gl_devnc = $_POST['ctadev'];
 
 $chk_cur_val =  $this->model->Query_value('CTA_GL_CONF','ID','where ID_compania="'.$this->model->id_compania .'"');
 
@@ -255,6 +329,8 @@ $values =  array( 'ID_compania' => $this->model->id_compania ,
 	              'CTA_PUR' => $cta_gl_pur,
 	              'CTA_TAX' => $cta_gl_tax,
 	              'GLACCT' => $cta_gl_acct,
+	              'CTA_CXC' => $cta_gl_aract,
+	              'CTA_DEV' => $cta_gl_devnc
 	              );
 
 if($chk_cur_val!=''){
@@ -263,17 +339,57 @@ if($chk_cur_val!=''){
  $this->model->insert('CTA_GL_CONF',$values);
 }
 
+$this->CheckError();
+
+
 echo '<script> alert("Se ha actualizado los detalles con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
 
 
 }
+
+
+
+/*//FILENAME DROPBOX
+if($_POST['fact_dropbox_set']){
+
+$foldername = $_POST['foldername_dropbox'];
+
+
+$chk_cur_val =  $this->model->Query_value('CONF_DROPBOX','ID','where ID_compania="'.$this->model->id_compania .'"');
+
+$values =  array( 'ID_compania' => $this->model->id_compania , 
+	              'FOLDERNAME'  => $foldername);
+
+
+
+if($chk_cur_val!=''){
+ $this->model->update('CONF_DROPBOX',$values, 'where ID_compania="'.$this->model->id_compania .'"');
+}else{
+ $this->model->insert('CONF_DROPBOX',$values);
+}
+$this->CheckError();
+
+
+
+echo '<script> alert("Se ha actualizado los detalles con exito","ok"); window.open("'.URL.'index.php?url=home/config_sys","_self");</script>';
+
+
+}
+*/
+
+
 //////LLAMADAS DE DATOS
+
+//foldername de dropbox
+//$drop_name = $this->model->Query_value('CONF_DROPBOX','FOLDERNAME','where ID_compania="'.$this->model->id_compania .'"');
 
 //RECUPERO INFO DE CUENTAS GL
 $CTA_CXP = $this->model->Query_value('CTA_GL_CONF','CTA_CXP','WHERE ID_compania="'.$this->model->id_compania.'"');
 $CTA_PUR = $this->model->Query_value('CTA_GL_CONF','CTA_PUR','WHERE ID_compania="'.$this->model->id_compania.'"');
 $CTA_TAX = $this->model->Query_value('CTA_GL_CONF','CTA_TAX','WHERE ID_compania="'.$this->model->id_compania.'"');
 $CTA_GLACCT = $this->model->Query_value('CTA_GL_CONF','GLACCT','WHERE ID_compania="'.$this->model->id_compania.'"');
+$CTA_ARACNT = $this->model->Query_value('CTA_GL_CONF','CTA_CXC','WHERE ID_compania="'.$this->model->id_compania.'"');
+$CTA_DEV = $this->model->Query_value('CTA_GL_CONF','CTA_DEV','WHERE ID_compania="'.$this->model->id_compania.'"');
 //RECUPERO INFO DE MODULOS
 $SQL = 'SELECT * FROM MOD_MENU_CONF';
 
@@ -284,11 +400,13 @@ foreach ($MOD_MENU as $value) {
 $value = json_decode($value);
 
 if($value->{'mod_sales'}=='1'){ $mod_sales_CK = 'checked'; }else{ $mod_sales_CK = '';  }
+if($value->{'mod_invo'}=='1'){  $mod_invo_CK  = 'checked'; }else{ $mod_invo_CK = '';  } 
 if($value->{'mod_fact'}=='1'){ $mod_fact_CK  = 'checked'; }else{ $mod_fact_CK = '';  }
 if($value->{'mod_invt'}=='1'){ $mod_invt_CK = 'checked'; }else{ $mod_invt_CK  = '';  }
+if($value->{'mod_req'}=='1'){ $mod_req_CK = 'checked'; }else{ $mod_req_CK  = '';  }
 if($value->{'mod_rept'}=='1'){ $mod_rept_CK = 'checked'; }else{ $mod_rept_CK = '';  }
 if($value->{'mod_stock'}=='1'){$mod_stoc_CK = 'checked'; }else{ $mod_stoc_CK = '';  }
-if($value->{'mod_pro'}=='1'){  $mod_pro_CK  = 'checked'; }else{ $mod_pro_CK = '';  }
+if($value->{'mod_pro'}=='1'){  $mod_pro_CK  = 'checked'; }else{ $mod_pro_CK = '';  } 
 }
 
 
@@ -321,13 +439,34 @@ foreach ($saleRes as $sale) {
                <div class="col-lg-4">
 	             <input type="text" class="form-control"  value="'.$porc.'" disabled/> 
                </div>
-               <div class="col-lg-2">
+               <div class="col-lg-3">
 	             <input type="button" onclick="del_tax('.$sale->{'id'}.');" value="Borrar" class="btn btn-primary  btn-block text-lef"  />
                </div><div class="col-lg-12"></div>';
 }
 
 
 
+//LLAMO LOS VALORES de impresion fiscal
+$PrintInfo= $this->GetPrintInfo();
+
+foreach ($PrintInfo as $dato) {
+	$dato = json_decode($dato);
+
+	$serial =  $dato->{'SERIAL'};
+	$desc =    $dato->{'DESCRIPCION'};
+	$ID = "'".$serial."'";
+
+	$table2 .= '<div class="col-lg-1"></div>
+	            <div class="col-lg-4">
+	             <input type="text" class="form-control"  value="'.$serial.'" disabled/> 
+               </div>
+               <div class="col-lg-4">
+	             <input type="text" class="form-control"  value="'.$desc.'" disabled/> 
+               </div>
+               <div class="col-lg-2">
+	             <input type="button" onclick="del_print('.$ID.');" value="Borrar" class="btn btn-primary  btn-block text-lef"  />
+               </div><div class="col-lg-12"></div>';
+}
 
 //RECUPERO INFO DE DETALLES DE FACTURACION
 $DIV_LINE = $this->model->Query_value('FAC_DET_CONF','DIV_LINE','WHERE ID_compania="'.$this->model->id_compania.'"');
@@ -363,15 +502,11 @@ foreach ($smtp as $smtp_val) {
 }
 
 unset($_POST);
+$this->CheckError();
+
 
 ?>	
 <div class="page col-xs-12">
-
-<!--INI DIV ERRO-->
-<div id="ERROR" class="alert alert-danger"></div>
-<!--INI DIV ERROR-->
-
-
 <div  class="col-xs-12">
 <!-- contenido -->
 <h2>Configuracion del sistema</h2>
@@ -387,6 +522,8 @@ unset($_POST);
     <li><a data-toggle="tab" href="#menu4">SMTP</a></li>
     <li><a data-toggle="tab" href="#menu5">Modulos</a></li>
     <li><a data-toggle="tab" href="#menu6">Ctas. GL</a></li>
+    <li><a data-toggle="tab" href="#menu7">Impresoras Fiscal</a></li>
+    <li><a data-toggle="tab" href="#menu8">Logs</a></li>
   </ul>
 
   <div class="tab-content">
@@ -448,7 +585,7 @@ unset($_POST);
 			</div>
 		</div>
 										
-		<div class="form-group col-lg-2">
+		<div class="form-group col-lg-3">
 		<input type="submit"  value="Guardar" class="btn btn-primary  btn-block text-lef"/>
 		</div>
 		</form>
@@ -481,96 +618,104 @@ unset($_POST);
 	 </fieldset>
     </div>
 
-    <!--CONFIGURACION DE VENTAS -->
+    <!--CONFIGURACION DE DETALLES FACTURAS RECIBOS -->
     <div id="menu3" class="tab-pane fade">
       <fieldset>
  	  	<form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
 		<input type="hidden" id="sale" name="sale" value="1" />
 
-
+        <div class="col-lg-6">
 		<fieldset>
-		<legend><h4>Tax ID</h4></legend>
-		<div class="form-group">
-		<div class="col-lg-12"></div>
+			<legend><h4>Tax ID</h4></legend>
+			<div class="form-group">
+			<div class="col-lg-12"></div>
 
-		<?php echo $table; ?>
+			<?php echo $table; ?>
 
-		<script type="text/javascript">
-			
-		function del_tax(id){
+			<script type="text/javascript">
+				
+			function del_tax(id){
 
-		URL = document.getElementById('URL').value;
+			URL = document.getElementById('URL').value;
 
-		var datos= "url=bridge_query/del_tax/"+id;
-		var link= URL+"index.php";
+			var datos= "url=home/del_tax/"+id;
 
-		  $.ajax({
-		      type: "GET",
-		      url: link,
-		      data: datos,
-		      success: function(res){
+			var link= URL+"index.php";
 
-				 alert("Se ha eliminado el tax seleccionado","ok"); 
-				 window.open("index.php?url=home/config_sys","_self");
+			  $.ajax({
+			      type: "GET",
+			      url: link,
+			      data: datos,
+			      success: function(res){
 
-				}
-		   });
+					 alert("Se ha eliminado el tax seleccionado","ok"); 
+					 window.open("index.php?url=home/config_sys","_self");
 
-
-		}
-		</script>
-
-		<div class="separador col-lg-12"></div>
-
-		<div class="col-lg-1"></div>
-		<div class="col-lg-4">
-			<input type="text" class="form-control" id="idtax" name="idtax" required/> 
-			<p class="help-block">ID del TAX que esta configurado en SAGE 50</p>
-		</div>
-
-		<div class="col-lg-4">
-			<input type="text" class="form-control" id="porc" name="porc"  placeholder="0.00" required/> 
-			<p class="help-block">% RATE o porcentaje del TAX que esta configurado en SAGE 50</p>
-		</div>
-
-		<div class="col-lg-2">
-		<input type="submit"  value="Agregar" class="btn btn-primary  btn-block text-lef" id="add" name="add"  />
-		</div>
+					}
+			   });
 
 
-		</div>
-		</fieldset>
-		</form>
+			}
+			</script>
+
+			<div class="separador col-lg-12"></div>
+
+			<div class="col-lg-1"></div>
+			<div class="col-lg-4">
+				<input type="text" class="form-control" id="idtax" name="idtax" required/> 
+				<p class="help-block">ID del TAX que esta configurado en SAGE 50</p>
+			</div>
+
+			<div class="col-lg-4">
+				<input type="text" class="form-control" id="porc" name="porc"  placeholder="0.00" required/> 
+				<p class="help-block">% RATE o porcentaje del TAX que esta configurado en SAGE 50</p>
+			</div>
+
+			<div class="col-lg-3">
+			<input type="submit"  value="Agregar" class="btn btn-primary  btn-block text-lef" id="add" name="add"  />
+			</div>
 
 
-		<form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
-		<fieldset>
-		<legend>Detalle en facturas/recibos</legend>
-        
-		<div class="col-lg-2">
-		<fieldset>
-		<input type="CHECKBOX" name="fact_item_line" <?php echo $DIV_LINE_CK; ?> />&nbsp<label>Dividir lineas de detalles de Items en facturas</label><p class='help-block'>Permite no sumarizar la cantidades de Lotes seleccionados, se  mostraran en lineas independientes con el detalle del Item</p>  
-		</fieldset>
-		</div>
-       
-
-       
-		<div class="col-lg-2">
-		<fieldset>
-		<label>No. de lineas </label><input type="text" name="fact_no_line" value="<?php echo $NO_LINES; ?>" />&nbsp<p class='help-block'>Determina el No. de Lineas para las tablas con campos de entrada. Maximo 9999 lineas</p>
-        </fieldset> 
-		</div>
+			</div>
+			</form>
+		</fieldset>	
+	    </div>
 
 
-		<div class="col-lg-12"></div>
-		<div class="col-lg-10"></div>
-	    <div class="col-lg-2">
-		<input type="submit"  value="Guardar" class="btn btn-primary btn-block text-lef" id="fact_detail_set" name="fact_detail_set"  />
-		</div>
- 		
+        <div class="col-lg-6">
 
-		</fieldset>
-		</form>
+			<form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+			<fieldset>
+			<legend>Detalle en facturas/recibos</legend>
+	        
+			<div class="col-lg-6">
+			<fieldset>
+			<input type="CHECKBOX" name="fact_item_line" <?php echo $DIV_LINE_CK; ?> />&nbsp<label>Dividir lineas de detalles de Items en facturas</label><p class='help-block'>Permite no sumarizar la cantidades de Lotes seleccionados, se  mostraran en lineas independientes con el detalle del Item</p>  
+			</fieldset>
+			</div>
+	       
+
+	       
+			<div class="col-lg-6">
+			<fieldset>
+			<label>No. de lineas </label><input class='numb' type="text" name="fact_no_line" value="<?php echo $NO_LINES; ?>" />&nbsp<p class='help-block'>Determina el No. de Lineas para las tablas con campos de entrada. Maximo 9999 lineas</p>
+	        </fieldset> 
+			</div>
+
+
+			<div class="col-lg-12"></div>
+			<div class="col-lg-9"></div>
+		    <div class="col-lg-3">
+			<input type="submit"  value="Guardar" class="btn btn-primary btn-block text-lef" id="fact_detail_set" name="fact_detail_set"  />
+			</div>
+	 		
+
+			</fieldset>
+			</form>
+        </div>
+
+
+
 
 		</fieldset>
     </div>
@@ -618,29 +763,6 @@ unset($_POST);
 		</form>
 
 
-		<script type="text/javascript">
-		function send_test(){
-
-		URL       = document.getElementById('URL').value;
-		var email = document.getElementById('emailtest').value;
-		var datos= "url=bridge_query/send_test_mail/"+email;
-		var link= +"index.php";
-
-		$('#notificacion').html('<P>Enviando...</P>');
-
-		  $.ajax({
-		      type: "GET",
-		      url: link,
-		      data: datos,
-		      success: function(res){
-		      
-		       $('#notificacion').html(res);
-		       // alert(res);
-		        }
-		   });
-
-		}
-		</script>
 
 
 		<div class="separador col-lg-12"></div>
@@ -667,8 +789,10 @@ unset($_POST);
 		<div class="col-lg-2">
 		<fieldset>
 			<input type="CHECKBOX" name="mod_sales" <?php echo $mod_sales_CK; ?> />&nbsp<label>Gestion de Ventas</label><br>
+			<input type="CHECKBOX" name="mod_invo" <?php echo  $mod_invo_CK; ?> />&nbsp<label>Facturacion Fiscal</label><br>
 			<input type="CHECKBOX" name="mod_fact" <?php echo  $mod_fact_CK; ?> />&nbsp<label>Gestion de Compras</label><br>
 			<input type="CHECKBOX" name="mod_invt" <?php echo  $mod_invt_CK; ?> />&nbsp<label>Gestion de Inventario</label><br>
+			<input type="CHECKBOX" name="mod_req" <?php echo  $mod_req_CK; ?> />&nbsp<label>Gestion de Requisiciones</label><br>
 			<input type="CHECKBOX" name="mod_rept" <?php echo  $mod_rept_CK; ?> />&nbsp<label>Gestion de Reportes</label><br>
 			<input type="CHECKBOX" name="mod_stock" <?php echo $mod_stoc_CK; ?> />&nbsp<label>Gestion de Almacenes</label><br>
 			<input type="CHECKBOX" name="mod_pro" <?php echo $mod_pro_CK; ?> />&nbsp<label>Gestion de Propuestas</label><br>
@@ -688,26 +812,43 @@ unset($_POST);
       <form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
 		<fieldset>
 		<legend>Uso de cuentas GL</legend>
-        
+
 		<div class="col-lg-2">
 		<fieldset>
-		<label>Cta. MG/CxP</label> <input type="text"  name="cta_gl_cxp" id="cta_gl_cxp" onkeyup="check_num(this.value,'cta_gl_cxp');"  class='numb' value="<?php echo $CTA_CXP; ?>" />
+		<label>Cta. MG/CxP</label><br><input type="text"  class="numb"  name="cta_gl_cxp" id="cta_gl_cxp" onkeyup="check_num(this.value,'cta_gl_cxp');"  class='numb' value="<?php echo $CTA_CXP; ?>" />
         </fieldset> 
 		</div>
+		<div class="col-lg-12"></div>
 		<div class="col-lg-2">
 		<fieldset>
-		<label>Cta. MG/Compras</label> <input type="text"  name="cta_gl_pur" id="cta_gl_pur" onkeyup="check_num(this.value,'cta_gl_pur');" class='numb' value="<?php echo $CTA_PUR; ?>" />
+		<label>Cta. MG/Compras</label><br><input type="text"  class="numb"  name="cta_gl_pur" id="cta_gl_pur" onkeyup="check_num(this.value,'cta_gl_pur');" class='numb' value="<?php echo $CTA_PUR; ?>" />
         </fieldset> 
 		</div>
+		<div class="col-lg-12"></div>
 		<div class="col-lg-2">
 		<fieldset>
-		<label>Cta. MG/ITBMS</label> <input type="text"  name="cta_gl_tax" id="cta_gl_tax" onkeyup="check_num(this.value,'cta_gl_tax');" class='numb' value="<?php echo $CTA_TAX; ?>" />
+		<label>Cta. MG/ITBMS</label><br><input type="text" class="numb"  name="cta_gl_tax" id="cta_gl_tax" onkeyup="check_num(this.value,'cta_gl_tax');" class='numb' value="<?php echo $CTA_TAX; ?>" />
         </fieldset> 
 		</div>
+		<div class="col-lg-12"></div>
 		<div class="col-lg-2">
 		<fieldset>          
           
-            <label>Cta. MG/Contra partida: </label><input type="text" onkeyup="check_num(this.value,'Glacct');"  id="Glacct" name="Glacct" value="<?php echo $CTA_GLACCT; ?>"/>
+            <label>Cta. MG/Contra partida: </label><br><input class="numb"  type="text" onkeyup="check_num(this.value,'Glacct');"  id="Glacct" name="Glacct" value="<?php echo $CTA_GLACCT; ?>"/>
+         </fieldset>
+		</div>
+		<div class="col-lg-12"></div>
+		<div class="col-lg-2">
+		<fieldset>          
+          
+            <label>Cta. CXC/AR: </label><br><input class="numb" type="text" onkeyup="check_num(this.value,'ARACNT');"  id="ARACNT" name="ARACNT" value="<?php echo $CTA_ARACNT; ?>"/>
+         </fieldset>
+		</div>
+		<div class="col-lg-12"></div>
+		<div class="col-lg-2">
+		<fieldset>          
+          
+            <label>Cta. Devoluciones/NC: </label><br><input class="numb" type="text" onkeyup="check_num(this.value,'ctadev');"  id="ctadev" name="ctadev" value="<?php echo $CTA_DEV; ?>"/>
          </fieldset>
 		</div>
 
@@ -721,6 +862,108 @@ unset($_POST);
 		</fieldset>
 		</form>
     </div>
+
+      <!--impresoras fiscal-->
+	 <div id="menu7" class="tab-pane fade">
+	 <fieldset>
+	 <div class="col-lg-6">
+	      <form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+			<fieldset>
+			<legend>Impresoras Fiscal</legend>
+	        <div class="form-group">
+			<div class="col-lg-12"></div>
+
+			<?php echo $table2; ?>
+
+			<script type="text/javascript">
+				
+			function del_print(id){
+
+			URL = document.getElementById('URL').value;
+
+			var datos= "url=home/del_print/"+id;
+			var link= URL+"index.php";
+
+			  $.ajax({
+			      type: "GET",
+			      url: link,
+			      data: datos,
+			      success: function(res){
+
+					 alert("Se ha eliminado la impresora seleccionado","ok"); 
+					 window.open("index.php?url=home/config_sys","_self");
+
+					}
+			   });
+
+
+			}
+			</script>
+
+			<div class="separador col-lg-12"></div>
+	        
+			<div class="col-lg-1"></div>
+			<div class="col-lg-4">
+				<input type="text"  maxlength="20" class="form-control" id="serial" name="serial" required/> 
+				<p class="help-block">Ingrese el número serial de la impresora</p>
+			</div>
+
+			<div class="col-lg-4">
+				<input type="text"  maxlength="20" class="form-control" id="printdesc" name="printdesc" required/>  
+				<p class="help-block">Ingrese una descripcion</p>
+			</div>
+
+			<div class="col-lg-3">
+			<input type="submit"  value="Agregar" class="btn btn-primary  btn-block text-lef" id="addPrint" name="addPrint"  />
+			</div>
+
+
+			</div>
+	        </fieldset>
+	       </form>
+        </div>
+<!--         <div class="col-lg-6">
+			<form action="" role="form" class="form-horizontal" enctype="multipart/form-data" method="POST">
+			<fieldset>
+			<legend>Nombre de carpeta en dropbox</legend>
+	        
+			<div class="col-lg-8">
+			<fieldset>
+			<input type="text" maxlength="5" name="foldername_dropbox" value="<?php echo $drop_name; ?>" /><p class='help-block'>Nombre de carpeta en dropbox que guarda los archivo para facturacion fiscal.</p>  
+			</fieldset>
+			</div>
+
+
+
+			<div class="col-lg-12"></div>
+			<div class="col-lg-10"></div>
+		    <div class="col-lg-2">
+			<input type="submit"  value="Guardar" class="btn btn-primary btn-block text-lef" id="fact_dropbox_set" name="fact_dropbox_set"  />
+			</div>
+	 		
+
+			</fieldset>
+			</form>
+		 </div> -->
+     </fieldset>
+     </div>
+
+     
+     <!--LOGS -->
+    <div id="menu8" class="tab-pane fade">
+      <fieldset >
+    	 <legend>Logs - Lectura de archivos de facturacion fiscal</legend> 
+         <button onclick="ShowLog();"><i class="fa fa-refresh" ></i> Ver/Refrescar</button>
+         <div id ="logView" class="logWindow col-lg-12" ></div>
+	  </fieldset>
+	  <fieldset >
+    	 <legend>Logs - BD</legend> 
+         <button onclick="ShowLogBD();"><i class="fa fa-refresh" ></i> Ver/Refrescar</button>
+         <div id ="logViewBD" class="logWindow col-lg-12" ></div>
+	  </fieldset>
+
+	</div>
+
 
 </div>
 

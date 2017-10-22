@@ -120,7 +120,14 @@ public function fact_mailing($id){
 }
           
 
+public function PO_filter_by_Vendor($vendor){
 
+
+
+
+
+    
+}
     
 
 

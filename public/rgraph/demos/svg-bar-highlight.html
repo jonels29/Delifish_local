@@ -1,0 +1,359 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <link rel="stylesheet" href="demos.css" type="text/css" media="screen" />
+
+    <script src="../libraries/RGraph.svg.common.core.js" ></script>
+    <script src="../libraries/RGraph.svg.common.ajax.js" ></script>
+    <script src="../libraries/RGraph.svg.bar.js" ></script>
+    
+
+    <title>RGraph demo: An SVG Bar chart that's clickable</title>
+
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="An SVG Bar chart that's clickable" />
+</head>
+<body>
+
+
+    <h1>An SVG Bar chart that's clickable</h1>
+    
+    <p>
+        There's a canvas HOWTO document that shows a demo of what's being done here - 
+        it's less code which means less to both understand and maintain. 
+        <a href="https://www.rgraph.net/canvas/docs/howto-create-a-bar-chart-capable-of-multiple-select.html" target="_blank"><b>You can find that here</b></a>.
+    </p>
+
+    
+    <div style="width: 750px; height: 300px" id="cc"></div>
+
+
+
+        <div id="fb-root"></div>
+    <script>
+        function loadFB (d)
+        {
+            var js, fjs = document.getElementsByTagName('script')[0];
+            if (document.getElementById('facebook-jssdk')) {
+                return;
+            }
+            
+            js     = document.createElement('script');
+            js.id  = 'facebook-jssdk';
+            js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8";
+            
+            fjs.parentNode.insertBefore(js, fjs);
+        }
+        
+        
+        setTimeout(loadFB, 1500);
+    </script>
+    
+    <style>
+        div#sharePopup {
+            display: inline-block;
+            color: white;
+            z-index: 2;
+            min-width: 575px;
+            height: 40px;
+            margin-left: 100px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 1px -1px 2px #aaa;
+            background-color: rgba(0,0,0,0.75);
+            text-align: center;
+            font-weight: bold;
+            border-radius: 10px;
+        }
+    
+        div#sharePopup span#label {
+            position: relative;
+            top: 5px;
+        }
+        
+        div#sharePopup div.fb-like {
+            text-align: center;
+            display: inline-block;
+            position: relative;
+            top: 4px;
+        }
+    </style>
+    
+    <div id="sharePopup">
+        <span id="label">If you like RGraph please share it:</span>
+        <span style="display: inline-block; min-width: 225px">
+            <div class="fb-like" data-href="https://www.facebook.com/rgraph" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+            <a href="javascript: null" onclick="window.open('http://www.twitter.com/share?url=https://www.rgraph.net&text=HTML5%20charts%20for%20the%20web%20with%20@_RGraph%20', 'twitter-sharer-window', 'top=50,left=50,width=700,height=300')"><img src="/images/twitter-60x20.png"  style="transform: translate(10px, 8px); box-shadow: 1px 1px 1px gray" border="0" /></a>
+        </span>
+    </div>
+
+    <script>
+        state2 = localStorage['state2'] ? JSON.parse(localStorage['state2']) : {selected: []};
+
+        new RGraph.SVG.Bar({
+            id: 'cc',
+            data: [14,39,-32,-12,8,6,-5],
+            options: {
+                yaxisMax: 40,
+                yaxisMin: -40,
+                yaxis: false,
+                xaxis: false,
+                backgroundGridVlines: false,
+                backgroundGridBorder: false
+            }
+        }).on('draw', function (obj)
+        {
+            // Loop through all the bars
+            for (var i=0; i<obj.coords.length; ++i) {
+                (function (index, rect)
+                {
+                    // Change the pointer when hovering over the rect
+                    rect.addEventListener('mousemove', function (e)
+                    {
+                        e.target.style.cursor = 'pointer';
+                    }, false);
+
+
+
+
+                    //
+                    // Do this when the rect is clicked
+                    //
+                    rect.addEventListener('click', function (e)
+                    {
+                        if (!state2.selected[index]) {
+
+                            // Add the highlight
+                            highlight(obj, rect, index);
+
+                            state2.selected[index] = true;
+
+                            // The notify function simply tells the server what 
+                            // bars are selected
+                            //
+                            notify();
+
+                        } else {
+                            state2.selected[index] = null;
+                        }
+                    }, false);
+                })(i, obj.coords[i].object);
+            }
+
+            // Read the state2 variable and cover the relevant bars
+            for (var i=0; i<obj.data.length; ++i) {
+                if (state2.selected[i]) {
+                    highlight(obj, obj.coords[i].object, i);
+                }
+            }
+        }).draw();
+
+
+
+
+        //
+        // Sends notification to the server
+        //
+        function notify()
+        {
+            // Save the state2 to localStorage
+            localStorage['state2'] = JSON.stringify(state2);
+
+            // Generate an AJAX request
+            RGraph.SVG.AJAX.POST('?', {state2: state2.selected}, function (str)
+            {
+                // Handle the AJAX response here
+            });
+        }
+
+
+
+
+        //
+        // Highlights a bar by adding a rect on top of it
+        //
+        function highlight(obj, rect, index)
+        {
+            rect.rgraph_highlight = RGraph.SVG.create({
+                svg: obj.svg,
+                type: 'rect',
+                parent: obj.svg.all,
+                attr: {
+                    x:              rect.getAttribute('x'),
+                    y:              rect.getAttribute('y'),
+                    width:          rect.getAttribute('width'),
+                    height:         rect.getAttribute('height'),
+                    fill:           'rgba(255,255,255,0.7)',
+                    stroke:         'black',
+                    'stroke-width': 3
+                }
+            });
+
+
+            //
+            // When the highlight is clicked - get rid of it and call
+            // the notify() function to update the server.
+            //
+            rect.rgraph_highlight.onclick = function (e)
+            {
+                obj.svg.all.removeChild(rect.rgraph_highlight);
+                rect.rgraph_highlight  = null;
+                state2.selected[index] = null;
+                
+                notify();
+            }
+
+            rect.rgraph_highlight.style.cursor = 'pointer';
+        }
+    </script>
+
+
+
+    <p></p>
+
+    This goes in the documents header:
+    <pre class="code">
+&lt;script src="RGraph.svg.common.core.js"&gt;&lt;/script&gt;
+&lt;script src="RGraph.svg.common.ajax.js"&gt;&lt;/script&gt;
+&lt;script src="RGraph.svg.bar.js"&gt;&lt;/script&gt;
+</pre>
+    
+    Put this where you want the chart to show up:
+    <pre class="code">
+&lt;div style="width: 750px; height: 300px" id="chart-container"&gt;&lt;/div&gt;
+</pre>
+
+    This is the code that generates the chart:
+    <pre class="code">
+&lt;script&gt;
+    state2 = localStorage['state2'] ? JSON.parse(localStorage['state2']) : {selected: []};
+
+    new RGraph.SVG.Bar({
+        id: 'cc',
+        data: [14,39,-32,-12,8,6,-5],
+        options: {
+            yaxisMax: 40,
+            yaxisMin: -40,
+            yaxis: false,
+            xaxis: false,
+            backgroundGridVlines: false,
+            backgroundGridBorder: false
+        }
+    }).on('draw', function (obj)
+    {
+        <span>// Loop through all the bars</span>
+        for (var i=0; i&lt;obj.coords.length; ++i) {
+            (function (index, rect)
+            {
+                <span>// Change the pointer when hovering over the rect</span>
+                rect.addEventListener('mousemove', function (e)
+                {
+                    e.target.style.cursor = 'pointer';
+                }, false);
+
+
+
+
+                <span>//
+                // Do this when the rect is clicked
+                //</span>
+                rect.addEventListener('click', function (e)
+                {
+                    if (!state2.selected[index]) {
+
+                        <span>// Add the highlight</span>
+                        highlight(obj, rect, index);
+
+                        state2.selected[index] = true;
+
+                        <span>// The notify function simply tells the server what 
+                        // bars are selected
+                        //</span>
+                        notify();
+
+                    } else {
+                        state2.selected[index] = null;
+                    }
+                }, false);
+            })(i, obj.coords[i].object);
+        }
+
+        <span>// Read the state2 variable and cover the relevant bars</span>
+        for (var i=0; i&lt;obj.data.length; ++i) {
+            if (state2.selected[i]) {
+                highlight(obj, obj.coords[i].object, i);
+            }
+        }
+    }).draw();
+
+
+
+
+    <span>//
+    // Sends notification to the server
+    //</span>
+    function notify()
+    {
+        <span>// Save the state2 to localStorage</span>
+        localStorage['state2'] = JSON.stringify(state2);
+
+        <span>// Generate an AJAX request</span>
+        RGraph.SVG.AJAX.POST('?', {state2: state2.selected}, function (str)
+        {
+            <span>// Handle the AJAX response here</span>
+        });
+    }
+
+
+
+
+    <span>//
+    // Highlights a bar by adding a rect on top of it
+    //</span>
+    function highlight(obj, rect, index)
+    {
+        rect.rgraph_highlight = RGraph.SVG.create({
+            svg: obj.svg,
+            type: 'rect',
+            parent: obj.svg.all,
+            attr: {
+                x:              rect.getAttribute('x'),
+                y:              rect.getAttribute('y'),
+                width:          rect.getAttribute('width'),
+                height:         rect.getAttribute('height'),
+                fill:           'rgba(255,255,255,0.7)',
+                stroke:         'black',
+                'stroke-width': 3
+            }
+        });
+
+
+        <span>//
+        // When the highlight is clicked - get rid of it and call
+        // the notify() function to update the server.
+        //</span>
+        rect.rgraph_highlight.onclick = function (e)
+        {
+            obj.svg.all.removeChild(rect.rgraph_highlight);
+            rect.rgraph_highlight  = null;
+            state2.selected[index] = null;
+            
+            notify();
+        }
+
+        rect.rgraph_highlight.style.cursor = 'pointer';
+    }
+&lt;/script&gt;
+</pre>
+
+
+
+    
+    
+
+    <p>
+        <a href="./#svg">&laquo; Back</a>
+    </p>
+
+</body>
+</html>

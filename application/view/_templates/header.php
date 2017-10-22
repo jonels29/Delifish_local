@@ -3,7 +3,7 @@
 <head>
 
 <!-- Latest compiled and minified CSS -->
-<script src="<?php echo URL; ?>js/jquery-2.2.1.min.js" ></script>
+<script src="<?php echo URL; ?>js/otros/jquery-2.2.1.min.js" ></script>
 
 
 <!-- Optional theme--> 
@@ -28,33 +28,34 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 
 
+    
 
 <!--  CUSTOM JS  --> 
-<script src="<?php echo URL; ?>js/sax_script.js" ></script>
+<script src="<?php echo URL; ?>js/aplicacion/aciweb_script.js" ></script>
 
 
 <!--  BOOTSTRAP JS  --> 
-<script src="<?php echo URL; ?>js/bootstrap.min.js" ></script>
+<script src="<?php echo URL; ?>js/otros/bootstrap.min.js" ></script>
 <script src="<?php echo URL; ?>dist/js/bootstrap-submenu.min.js" defer></script>
 
 
 <!--  DATATABLES  JS --> 
 
-<script  src="<?php echo URL; ?>js/jquery.dataTables.min.js" ></script>
-<script  src="<?php echo URL; ?>js/selectDatatables.js" ></script>
-<script  src="<?php echo URL; ?>js/dataTables.buttons.min.js" ></script>
-<script  src="<?php echo URL; ?>js/buttons.flash.min.js" ></script>
-<script  src="<?php echo URL; ?>js/jszip.min.js" ></script>
-<script  src="<?php echo URL; ?>js/pdfmake.min.js" ></script>
-<script  src="<?php echo URL; ?>js/vfs_fonts.js" ></script>
-<script  src="<?php echo URL; ?>js/buttons.html5.min.js" ></script>
-<script  src="<?php echo URL; ?>js/buttons.print.min.js" ></script>
-<script  src="<?php echo URL; ?>js/buttons.colVis.min.js" ></script> 
-<script  src="<?php echo URL; ?>js/dataTables.colVis.js" ></script> 
-<script  src="<?php echo URL; ?>js/jquery.dataTables.columnFilter.js" ></script>
-<script  src="<?php echo URL; ?>js/jquery.dataTables.yadcf.js" ></script>
-<script  src="<?php echo URL; ?>js/dataTables.rowReorder.min.js" ></script>
-<script  src="<?php echo URL; ?>js/dataTables.responsive.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/jquery.dataTables.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/selectDatatables.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/dataTables.buttons.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/buttons.flash.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/jszip.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/pdfmake.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/vfs_fonts.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/buttons.html5.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/buttons.print.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/buttons.colVis.min.js" ></script> 
+<script  src="<?php echo URL; ?>js/otros/dataTables.colVis.js" ></script> 
+<script  src="<?php echo URL; ?>js/otros/jquery.dataTables.columnFilter.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/jquery.dataTables.yadcf.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/dataTables.rowReorder.min.js" ></script>
+<script  src="<?php echo URL; ?>js/otros/dataTables.responsive.min.js" ></script>
 
 
 <!-- SELECT2  JS --> 
@@ -62,6 +63,13 @@
 
 <!--  GRAPHS  JS --> 
 <!-- <script src="<?php echo URL; ?>morris/morris.js"></script> -->
+
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.common.core.js" ></script>
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.hbar.js" ></script>
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.common.dynamic.js"></script>
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.common.tooltips.js"></script>
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.common.key.js"></script>
+<script src="<?php echo URL; ?>rgraph/libraries/RGraph.pie.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>

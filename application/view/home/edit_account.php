@@ -1,3 +1,49 @@
+<!--INI DIV ERRO-->
+<div id="ERROR" ></div>
+
+<!--ERROR -->
+
+<div id="ErrorModal" class="modal fade" role="dialog">
+
+  <div class="modal-dialog modal-lg">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <button type="button" onclick="javascript:history.go(-1);" class="close" data-dismiss="modal">&times;</button>
+        <h3 >Error</h3>
+      </div>
+
+      <div class="col-lg-12 modal-body">
+
+      <!--ini Modal  body-->  
+
+            <div id='ErrorMsg'></div>
+
+      <!--fin Modal  body-->
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" onclick="javascript:history.go(-1); return true;" data-dismiss="modal" class="btn btn-primary" >OK</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--modal-->
+<!--INI DIV ERROR-->
+
+
+
+
+
 <?php
 error_reporting(0);
 
@@ -26,6 +72,18 @@ foreach ($res as $value) {
   $INF_STO= $value->{'stoc_view'};
   $INF_REP= $value->{'rep_view'};
   $PHOTO  = $value->{'photo'};
+  $INF_rol_1= $value->{'role_purc'};
+  $INF_rol_2= $value->{'role_fiel'};
+  $CLO_SO   = $value->{'closeSO'};
+  $PRINTER = $this->getPrinterById($value->{'printer'});
+
+  $prnterID = $value->{'printer'};
+   
+  if( $PRINTER == ''){
+
+   $PRINTER = 'Ninguna';
+   $prnterID = null;
+  }
 
   if($PHOTO == 'x'){
 
@@ -91,7 +149,33 @@ foreach ($res as $value) {
   $REP_CK = ''; 
   }
 
+  if($CLO_SO==1){//cerrar ordenes
 
+  $closeSO = 'checked';
+
+  }else{
+
+  $closeSO = ''; 
+  }
+
+
+	if($INF_rol_1==1){//notificaciones
+
+	$rol_purc_value = 'checked';
+
+	}else{
+
+	$rol_purc_value= '';	
+	}
+
+	if($INF_rol_2==1){//notificaciones
+
+	$rol_field_value = 'checked';
+
+	}else{
+
+	$rol_field_value = '';	
+	}
 
 }
 
@@ -105,6 +189,7 @@ if($this->model->active_user_role!='admin'){
 	$REP_CK .= ' disabled';
 	$STO_CK .= ' disabled';
 	$INV_CK .= ' disabled';
+	$closeSO .= ' disabled';
 
 }  
 
@@ -138,6 +223,15 @@ if($_POST['flag2']=='1'){
 		$mod_price_value = '0';	
 		}
 
+		if($_POST['clo_chk']==true){//permite al usuario modificar precios
+
+		$close_so_value = '1';
+
+		}else{
+
+		$close_so_value = '0';	
+		}
+
 		if($_POST['inv_chk']==true){
 
 		$set_inv_chk= '1';
@@ -163,6 +257,24 @@ if($_POST['flag2']=='1'){
 		}else{
 
 		$set_rep_chk = '0';	
+		}
+
+		if($_POST['rpurch_chk']==true){//notificaciones
+
+		$rol_purc_value = '1';
+
+		}else{
+
+		$rol_purc_value= '0';	
+		}
+
+		if($_POST['rfield_chk']==true){//notificaciones
+
+		$rol_field_value = '1';
+
+		}else{
+
+		$rol_field_value = '0';	
 		}
 		
 
@@ -211,7 +323,15 @@ if($_POST['trash_img']==1){
 }
 
 
+if($_POST['DefaultPrint']!=''){
 
+$printer = $_POST['DefaultPrint'];
+
+}else{
+
+$printer = 0;
+
+}
 
 $columns  = array( 'name'      => $_POST['name2'],
 	               'lastname'  => $_POST['lastname2'],
@@ -223,13 +343,19 @@ $columns  = array( 'name'      => $_POST['name2'],
 	               'inv_view'  => $set_inv_chk,
 	               'rep_view'  => $set_rep_chk,
 	               'stoc_view' => $set_sto_chk,
-	               'photo'     => $foto_file);
+	               'photo'     => $foto_file,
+	               'printer'   => $printer,
+	               'role_purc' => $rol_purc_value,
+		           'role_fiel' => $rol_field_value,
+                   'closeSO'   => $close_so_value);
 
 $clause = 'id="'.$_POST['user_2'].'"';
 
+
+
 $this->model->update('SAX_USER',$columns,$clause);
 
-
+$this->CheckError();
 
 
 
@@ -365,20 +491,78 @@ self.location="'.URL.'index.php?url=home/edit_account/'.$id.'";
 <div class="title col-lg-12"></div>
 <div class="col-lg-6">
 <fieldset>
-<legend><h4>Notificaciones</h4></legend>
-<?PHP if ($mod_fact_CK == 'checked') { ?><input type="CHECKBOX" name="oc_chk" <?php echo $notif_oc; ?> />&nbsp<label>Requisiciones</label><br>
-<input type="CHECKBOX" name="fc_chk" <?php echo $notif_fc; ?> />&nbsp<label>Facturas de Compra</label><?php } ?>
+<legend><h4>Notificaciones por correo</h4></legend>
+<?PHP if ($mod_fact_CK == 'checked') { ?>
+    <input type="CHECKBOX" name="fc_chk" <?php echo $notif_fc; ?> />&nbsp<label>Facturas de Compra</label>
+<?php } ?>
+
+<?PHP if ($mod_req_CK  == 'checked') { ?>
+	<input type="CHECKBOX" name="oc_chk" <?php echo $notif_oc; ?> />&nbsp<label>Requisiciones</label><br>
+<?php } ?>
 </fieldset>
 </div>
 <div class="col-lg-6">
 <fieldset>
 <legend><h4>Autorizaciones</h4></legend>
-<?PHP if ($mod_sales_CK == 'checked') { ?><input type="CHECKBOX" name="pri_chk" <?php echo $price_mod;  ?> />&nbsp<label>Modificar de Precios</label><br> <?php } ?>
-<?PHP if ($mod_invt_CK  == 'checked') { ?><input type="CHECKBOX" name="inv_chk" <?php echo $INV_CK;  ?> />&nbsp<label>Gestionar Inventario</label><br><?php } ?>
-<?PHP if ($mod_stoc_CK  == 'checked') { ?><input type="CHECKBOX" name="sto_chk" <?php echo $STO_CK;  ?> />&nbsp<label>Gestionar Ubicaciones</label><br><?php } ?>
-<?PHP if ($mod_rept_CK  == 'checked') { ?><input type="CHECKBOX" name="rep_chk" <?php echo $REP_CK;  ?> />&nbsp<label>Gestionar Reportes</label><br><?php } ?>
+<?PHP if ($mod_sales_CK == 'checked') { ?>
+
+<input type="CHECKBOX" name="pri_chk" <?php echo $price_mod;  ?> />&nbsp<label>Modificar de Precios</label><p class="help-block">(Autoriza modificacion de precios en Pedidos/Ordenes con venta directas)</p><br> 
+
+<input type="CHECKBOX" name="clo_chk" <?php echo $closeSO;  ?> />&nbsp<label>Cerrar Ordenes de ventas/Pedidos</label><p class="help-block">(Autoriza cerrar Pedidos/Ordenes de ventas)</p><br> 
+
+<?php } ?>
+<?PHP if ($mod_invt_CK  == 'checked') { ?>
+
+<input type="CHECKBOX" name="inv_chk" <?php echo $INV_CK;  ?> />&nbsp<label>Gestionar Inventario</label><br><p class="help-block">(Configuraciones y gestion de inventario)</p>
+
+<?php } ?>
+
+<?PHP if ($mod_stoc_CK  == 'checked') { ?>
+<input type="CHECKBOX" name="sto_chk" <?php echo $STO_CK;  ?> />&nbsp<label>Gestionar Ubicaciones</label><br><p class="help-block">(Reportes y gestion de ubicaciones de inventario)</p>
+<?php } ?>
+
+<?PHP if ($mod_rept_CK  == 'checked') { ?>
+<input type="CHECKBOX" name="rep_chk" <?php echo $REP_CK;  ?> />&nbsp<label>Gestionar Reportes</label><br><p class="help-block">(Generar reportes)</p>
+<?php } ?>
 </fieldset>
 </div>
+<?PHP if ($mod_sales_CK == 'checked') { ?>
+<div class="col-lg-6">
+<fieldset>
+<legend><h4>Impresora fiscal predeterminada</h4></legend>
+	<select class='select col-lg-12' id='DefaultPrint' name='DefaultPrint' >
+	<option value="" selected></option>
+		<?PHP 
+
+         $list = $this->getPrinterList();
+         $Printers = '';
+         foreach ($list as $key => $value) {
+         	$value = json_decode($value);
+
+            $Printers .= '<option value="'.$value->{'ID'}.'">'.$value->{'DESCRIPCION'}.' ( '.$value->{'SERIAL'}.') </option>';
+
+         }
+         
+         echo $Printers;
+
+		 ?>
+	</select>
+	<br>
+	<label>Seleccionada: </label><input class='col-lg-12' type="text" name="printerAsigned"  value="<?php echo $PRINTER;  ?>" readonly/>
+
+</fieldset>
+</div>
+<?php } ?>
+
+<?PHP if ($mod_req_CK == 'checked') { ?>
+<div class="col-lg-6">
+<fieldset>
+<legend><h4>Rol de usuario</h4></legend>
+<input type="CHECKBOX" name="rpurch_chk" <?php echo $rol_purc_value; ?> />&nbsp<label>Oficina</label> <p class="help-block">(Crea órdenes de compra y actualiza fechas de inicio de cotización. Mod. Requisiciones)</p>
+<input type="CHECKBOX" name="rfield_chk" <?php echo $rol_field_value; ?> />&nbsp<label>Campo</label><p class="help-block">(Crea requisiciones y reporta cantidades/fechas recibidas en órdenes de compra.  Mod. Requisiciones)</p>
+</fieldset>
+</div>
+<?php } ?>
 
 <div class="title col-lg-12"></div>
 <div class="col-lg-6"></div>
