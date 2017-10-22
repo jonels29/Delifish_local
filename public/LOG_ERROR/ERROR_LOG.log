@@ -1,0 +1,123 @@
+/SAGEID-1/2017-03-25 08:45:12pm/ReinaldoDaou R/Duplicate entry '1' for key 'PRIMARY'/INSERT INTO Purchase_Header_Imp (`TransactionID`,`PurchaseNumber`,`ID_compania`,`VendorID`,`VendorName`,`AP_Account`,`Net_due`,`Subtotal`,`nota`,`USER`,`Date`) VALUES ('000000001','','1','DEYRA BRAVO','DEYRA BRAVO','2000','1.00','1.00','test','1','2017-03-24');
+/SAGEID-1/2017-03-25 08:49:39pm/ReinaldoDaou R/Duplicate entry '1' for key 'PRIMARY'/INSERT INTO Purchase_Header_Imp (`TransactionID`,`PurchaseNumber`,`ID_compania`,`VendorID`,`VendorName`,`AP_Account`,`Net_due`,`Subtotal`,`nota`,`USER`,`Date`) VALUES ('000000001','','1','DEYRA BRAVO','DEYRA BRAVO','2000','1.00','1.00','test','1','2017-03-24');
+/SAGEID-1/2017-03-25 08:53:13pm/ReinaldoDaou R/Duplicate entry '1' for key 'PRIMARY'/INSERT INTO Purchase_Header_Imp (`TransactionID`,`PurchaseNumber`,`ID_compania`,`VendorID`,`VendorName`,`AP_Account`,`Net_due`,`Subtotal`,`nota`,`USER`,`Date`) VALUES ('000000001','','1','DEYRA BRAVO','DEYRA BRAVO','2000','1.00','1.00','test','1','2017-03-24');
+/SAGEID-/2017-03-27 12:37:17am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 12:37:26am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 12:37:28am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 12:37:29am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 12:38:15am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 12:40:05am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-03-27 01:41:59am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-03-27 06:57:32pm/ReinaldoDaou R/Unknown column 'DATE_CREATED' in 'field list'/INSERT INTO InventoryAdjust_Imp (`ItemID`,`ID_compania`,`Reference`,`ReasonToAdjust`,`Account`,`Quantity`,`Job_id_int`,`USER`,`JobID`,`JobPhaseID`,`JobCostCodeID`,`DATE_CREATED`,`location_id`) VALUES ('ITEM-002','6','000000002','prueba 2','0','-5','','25','','','','2017-03-27','6735');
+/SAGEID-6/2017-03-27 06:57:59pm/ReinaldoDaou R/Unknown column 'DATE_CREATED' in 'field list'/INSERT INTO InventoryAdjust_Imp (`ItemID`,`ID_compania`,`Reference`,`ReasonToAdjust`,`Account`,`Quantity`,`Job_id_int`,`USER`,`JobID`,`JobPhaseID`,`JobCostCodeID`,`DATE_CREATED`,`location_id`) VALUES ('ITEM-002','6','000000002','prueba 2','0','-5','','25','','','','2017-03-27','6735');
+/SAGEID-6/2017-03-27 06:58:53pm/ReinaldoDaou R/Unknown column 'DATE_CREATED' in 'field list'/INSERT INTO InventoryAdjust_Imp (`ItemID`,`ID_compania`,`Reference`,`ReasonToAdjust`,`Account`,`Quantity`,`Job_id_int`,`USER`,`JobID`,`JobPhaseID`,`JobCostCodeID`,`DATE_CREATED`,`location_id`) VALUES ('ITEM-002','6','000000002','pruena','1','-5','','25','','','','2017-03-27','6735');
+/SAGEID-6/2017-03-28 01:37:07pm/LuisArmuelles//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-03-28 04:29:43pm/ReinaldoDaou R/Duplicate entry '6--v001' for key 'ID_compania_PurchaseNumber_VendorID'/INSERT INTO Purchase_Header_Imp (`TransactionID`,`PurchaseNumber`,`ID_compania`,`VendorID`,`VendorName`,`AP_Account`,`Net_due`,`Subtotal`,`nota`,`USER`,`Date`) VALUES ('000000015','','6','v001','APCON CONSULTING','2000','25.65','25.65','prueba 20mil','25','');
+/SAGEID-6/2017-03-28 05:27:28pm/ReinaldoDaou R/Unknown column 'Purchase_Header_Imp.TransacctionID' in 'order clause'/SELECT *
+from Purchase_Header_Imp
+WHERE Purchase_Header_Imp.ID_compania="6" Order by Purchase_Header_Imp.TransacctionID DESC limit 200;
+/SAGEID-1/2017-04-01 05:08:33pm/ReinaldoDaou R/You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'group by PurOrdr_Header_Exp.TransactionID' at line 4/SELECT * 
+FROM PurOrdr_Header_Exp
+INNER JOIN PurOrdr_Detail_Exp ON PurOrdr_Header_Exp.TransactionID = PurOrdr_Detail_Exp.TransactionID
+WHERE PurOrdr_Header_Exp.ID_compania="1" and  Date >= "2016-11-01%" and Date <= "2016-12-31%"  Order by PurOrdr_Header_Exp.Date DESC limit 200 group by PurOrdr_Header_Exp.TransactionID;
+/SAGEID-6/2017-04-08 04:37:08pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:37:35pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:37:55pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:38:10pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:39:17pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:39:26pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:41:24pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-04-08 04:41:34pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-04-09 11:23:21pm///SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-04-09 11:24:12pm///SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-04-09 11:24:14pm///SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-04-09 11:27:50pm///SELECT * FROM MOD_MENU_CONF
+/SAGEID-/2017-04-10 03:05:15am///SELECT * FROM SAX_USER WHERE email='info@daoutel.net' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-/2017-04-10 03:05:38am///SELECT * FROM SAX_USER WHERE email='info@daoutel.net' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-/2017-04-10 03:10:02am///SELECT * FROM SAX_USER WHERE email='reinaldo.daou@gmail.com' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-/2017-04-10 03:10:11am///SELECT * FROM SAX_USER WHERE email='reinaldo.daou@gmail.com' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-/2017-04-10 03:12:03am///SELECT * FROM SAX_USER WHERE email='reinaldo.daou@gmail.com' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-/2017-04-10 03:12:50am///SELECT * FROM SAX_USER WHERE email='reinaldo.daou@gmail.com' AND pass='07298c6cae93ca9d5c0992818497fa87' AND onoff='1';
+/SAGEID-5/2017-04-24 02:17:39am/Alex Piña/Column count doesn't match value count at row 1/INSERT INTO `PRI_LIST_ITEM` (
+					`IDPRICE`,
+					`IDITEM` ,
+					`DESCRIPTION` , 
+					`PRICE` ,
+					`UNIT`)  
+					VALUES 
+					('029-01','FILETE DE BASA - CONGELADO','1.05','LB');
+/SAGEID-5/2017-04-24 02:18:13am/Alex Piña/Column count doesn't match value count at row 1/INSERT INTO `PRI_LIST_ITEM` (
+					`IDPRICE`,
+					`IDITEM` ,
+					`DESCRIPTION` , 
+					`PRICE` ,
+					`UNIT`)  
+					VALUES 
+					('029-01','FILETE DE BASA - CONGELADO','1.05','LB');
+/SAGEID-5/2017-04-24 02:19:42am/Alex Piña/Column count doesn't match value count at row 1/INSERT INTO `PRI_LIST_ITEM` (
+					`IDPRICE`,
+					`IDITEM` ,
+					`DESCRIPTION` , 
+					`PRICE` ,
+					`UNIT`)  
+					VALUES 
+					('029-01','FILETE DE BASA - CONGELADO','1.05');
+/SAGEID-5/2017-04-24 02:22:48am/Alex Piña/Column count doesn't match value count at row 1/INSERT INTO `PRI_LIST_ITEM` (
+					`IDPRICE`,
+					`IDITEM` ,
+					`DESCRIPTION` , 
+					`PRICE` ,
+					`UNIT`)  
+					VALUES 
+					('029-01','FILETE DE BASA - CONGELADO','1.05','LB');
+/SAGEID-5/2017-04-24 02:23:01am/Alex Piña/Column count doesn't match value count at row 1/INSERT INTO `PRI_LIST_ITEM` (
+					`IDPRICE`,
+					`IDITEM` ,
+					`DESCRIPTION` , 
+					`PRICE` ,
+					`UNIT`)  
+					VALUES 
+					('029-01','FILETE DE BASA - CONGELADO','1.05','LB');
+/SAGEID-5/2017-04-24 04:43:56pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE PRO_LIST_ID="pri-001"
+/SAGEID-5/2017-04-24 04:44:17pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE PRO_LIST_ID="pri-001"
+/SAGEID-5/2017-04-24 04:44:28pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE PRi_LIST_ID="pri-001"
+/SAGEID-5/2017-04-24 04:44:39pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE PRi_LIST_ID="pri-001"
+/SAGEID-5/2017-04-24 04:44:52pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE PRI_LIST_ID="pri-001"
+/SAGEID-5/2017-04-24 04:45:23pm/ReinaldoDaou R/Table 'daoutqw3_sage_ga.PRO_LIST_ID' doesn't exist/SELECT IDPRICE FROM PRO_LIST_ID WHERE IDPRICE ="pri-001"
+/SAGEID-5/2017-04-25 06:32:18am/Alex Piña/Unknown column 'PRI_LIST_ID.PRICEID' in 'order clause'/SELECT * 
+FROM PRI_LIST_ID WHERE PRI_LIST_ID.ID_compania="5" order by PRI_LIST_ID.PRICEID DESC limit 200;
+/SAGEID-6/2017-04-29 04:14:45pm/ReinaldoDaou R/Duplicate entry 'PRICE-001-PROD-001' for key 'PRIMARY'/INSERT INTO `PRI_LIST_ITEM` (
+						`IDPRICE`,
+						`IDITEM` ,
+						`DESCRIPTION` , 
+						`PRICE` ,
+						`UNIT`)  
+						VALUES 
+						('PRICE-001','PROD-001','PRODUCTO TERMINADO','500.00','LB');
+/SAGEID-6/2017-04-30 12:46:11am/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-05-01 01:29:06pm/LuisArmuelles//SELECT * FROM MOD_MENU_CONF
+/SAGEID-6/2017-05-02 01:26:35am/ReinaldoDaou R/Unknown column 'PRI_LIST_ITEM.ID_compania' in 'where clause'/SELECT * FROM PRI_LIST_ID WHERE PRI_LIST_ID.ID_compania="6" and PRI_LIST_ITEM.ID_compania="6"  order by PRI_LIST_ID.IDPRICE DESC limit 200;
+/SAGEID-6/2017-05-02 01:26:52am/ReinaldoDaou R/Unknown column 'PRI_LIST_ITEM.ID_compania' in 'where clause'/SELECT * FROM PRI_LIST_ID WHERE PRI_LIST_ID.ID_compania="6" and PRI_LIST_ITEM.ID_compania="6"  order by PRI_LIST_ID.IDPRICE DESC limit 200;
+/SAGEID-6/2017-05-02 01:28:50am/ReinaldoDaou R/Unknown column 'PRI_LIST_ITEM.ID_compania' in 'where clause'/SELECT * FROM PRI_LIST_ID WHERE PRI_LIST_ID.ID_compania="6" and PRI_LIST_ITEM.ID_compania="6"  order by PRI_LIST_ID.IDPRICE DESC limit 200;
+/SAGEID-6/2017-05-02 01:30:01am/ReinaldoDaou R/Unknown column 'PRI_LIST_ITEM.ID_compania' in 'where clause'/SELECT * FROM PRI_LIST_ID WHERE PRI_LIST_ID.ID_compania="6" and PRI_LIST_ITEM.ID_compania="6"  order by PRI_LIST_ID.IDPRICE DESC limit 200;
+/SAGEID-6/2017-05-06 08:05:00pm/ReinaldoDaou R/Duplicate entry '6-fact-0009-v001' for key 'ID_compania_PurchaseNumber_VendorID'/INSERT INTO Purchase_Header_Imp (`TransactionID`,`PurchaseNumber`,`ID_compania`,`VendorID`,`VendorName`,`AP_Account`,`Net_due`,`Subtotal`,`nota`,`USER`,`Date`) VALUES ('000000028','fact-0009','6','v001','APCON CONSULTING','2000','57000.00','57000.00','prueba 2','25','2017-05-04');
+/SAGEID-6/2017-05-21 01:04:22am/ReinaldoDaou//
+/SAGEID-6/2017-05-21 01:04:26am/ReinaldoDaou//
+/SAGEID-6/2017-05-21 01:04:30am/ReinaldoDaou//
+/SAGEID-6/2017-05-29 05:31:34pm/ReinaldoDaou R/Duplicate entry '0002-01-029-03' for key 'PRIMARY'/INSERT INTO `PRI_LIST_ITEM` (
+						`IDPRICE`,
+						`IDITEM` ,
+						`DESCRIPTION` , 
+						`PRICE` ,
+						`UNIT`,
+						`ID_compania`)  
+						VALUES 
+						('0002-01','029-03','CAMARON TITI PELADO FRESCO','2.86','LB','6');
+/SAGEID-3/2017-06-25 11:21:22pm/Alex Piña//SELECT * FROM MOD_MENU_CONF
+/SAGEID-3/2017-06-25 11:22:49pm/Alex Piña//SELECT * FROM MOD_MENU_CONF
+/SAGEID-3/2017-06-25 11:23:15pm/Alex Piña//SELECT * FROM MOD_MENU_CONF
+/SAGEID-3/2017-06-25 11:34:22pm/Alex Piña//SELECT * FROM MOD_MENU_CONF
+/SAGEID-3/2017-06-25 11:54:31pm/ReinaldoDaou R//SELECT * FROM MOD_MENU_CONF
+/SAGEID-3/2017-06-26 12:31:51am/ReinaldoDaou R/You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EX-002" and route="1" and ID_compania="3"' at line 1/UPDATE status_location SET qty="-3" where lote="EX-0020000" and id_product="["EX-002" and route="1" and ID_compania="3"
+/SAGEID-3/2017-06-26 12:31:54am/ReinaldoDaou R/You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EX-002" and route="1" and ID_compania="3"' at line 1' and ID_compania='3'' at line 1/SELECT * FROM InventoryAdjust_Imp where Reference='You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EX-002" and route="1" and ID_compania="3"' at line 1' and ID_compania='3';
+/SAGEID-3/2017-06-26 12:34:15am/ReinaldoDaou R/You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EX-002" and route="1" and ID_compania="3"' at line 1' and ID_compania='3'' at line 1/SELECT * FROM InventoryAdjust_Imp where Reference='You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'EX-002" and route="1" and ID_compania="3"' at line 1' and ID_compania='3';

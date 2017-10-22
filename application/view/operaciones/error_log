@@ -1,0 +1,2 @@
+[19-Oct-2016 17:12:12 Etc/GMT] PHP Fatal error:  Using $this when not in object context in /home/daoutqw3/public_html/DEMO/APCON/application/view/operaciones/inv_list.php on line 48
+[19-Oct-2016 17:13:19 Etc/GMT] PHP Fatal error:  Using $this when not in object context in /home/daoutqw3/public_html/DEMO/APCON/application/view/operaciones/inv_list.php on line 48
