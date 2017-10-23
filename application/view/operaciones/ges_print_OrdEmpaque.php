@@ -78,7 +78,7 @@ foreach ($comp as $value) {
  
 <!-- Order Info  -->   
 	          <div class="invoice_header tableInvDe col-xs-5">
-                <h2 class="h_invoice_header" >Orden de Empaque</h2>
+                <h2 class="h_invoice_header" >Orden de Pedido: </h2><label><font size="16"><?php echo $saleorder; ?></font></label>
                  <table width='100%' class="borderTable tableInvoice">
                  	<tr>
                  	  <th><strong>No. Orden:</strong> <?php echo $saleorder; ?></th>

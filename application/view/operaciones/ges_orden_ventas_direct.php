@@ -819,9 +819,30 @@ function set_price_fields(){
 
          <fieldset>
 
-             <p><strong>Lugar de Depacho</strong></p>
+             <p><strong>Lugar de Despacho</strong></p>
 
-               <input  class="col-lg-12" id="lugar_despacho" onkeyup="checkNOTA(this.id);" name="lugar_despacho" />
+               <!--<input  class="col-lg-12" id="lugar_despacho" onkeyup="checkNOTA(this.id);" name="lugar_despacho" />-->
+
+                <select  id="lugar_despacho" name="lugar_despacho" class="select col-lg-12"  required>
+
+                <option  selected disabled>Seleccione una Direccion</option>
+
+                <?php 
+
+                  $sql = 'SELECT * FROM SHIP_INFO WHERE id_compania="'.$this->model->id_compania.'"';
+
+                  $ship = $this->model->Query($sql); 
+
+                    foreach ($ship  as $datos) {
+
+                        $datos  = json_decode($datos);
+
+                         
+                          echo '<option value="'.$datos->{'ShipAddress'}.'">'.$datos->{'ShipAddress'}.'</option>';
+
+                    }
+
+                ?>
 
          </fieldset>
 
@@ -841,6 +862,7 @@ function set_price_fields(){
 
          </div>
 
+        
   </div>
 
  <div class="separador col-lg-12"> </div>
