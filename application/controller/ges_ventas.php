@@ -126,7 +126,7 @@ public function ges_print_salesorder($id){
 //$tax_sale = $tax/100;
 
  
-$id = trim(preg_replace('/000+/','',$id));
+//$id = trim(preg_replace('/000+/','',$id));
 
  $res = $this->model->verify_session();
  $id_compania = $this->model->id_compania;
@@ -184,7 +184,7 @@ $id = trim(preg_replace('/000+/','',$id));
 public function ges_print_OrdEmpaque($id){
 
 
-$id = trim(preg_replace('/000+/','',$id));
+//$id = trim(preg_replace('/000+/','',$id));
 
  $res = $this->model->verify_session();
  $id_compania = $this->model->id_compania;
@@ -203,7 +203,7 @@ $id = trim(preg_replace('/000+/','',$id));
                                                                                         CustomerID="'.$value->{'CustomerID'}.'" and 
                                                                                         id_compania="'.$id_compania.'"');
               
-               $custname = $value->{'ShipToName'}.' <br>'.$razonSocial.' <br>'.$value->{'AddressLine1'};
+               $custname = '<font style="font-weight:bold;">'.$value->{'ShipToName'}.'</font> <br>'.$razonSocial.'<br>'.$value->{'AddressLine1'};
      
                $saleorder = $value->{'SalesOrderNumber'};
 

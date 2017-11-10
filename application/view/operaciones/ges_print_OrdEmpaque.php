@@ -141,19 +141,23 @@ foreach ($comp as $value) {
 
 
                             </TABLE>
+                            <div class="separador col-xs-12"></div>
                 <?php } ?>
-                <div class="separador col-xs-12"></div>
+                
 
                     
                         
                              <TABLE  class='borderTable'  width="100%" border='1' >
                               <thead>
                                 <TR >
+
                                     <TH width="15%">Item</TH>
                                     <TH width="40%">Descripcion</TH>
+                                    <TH width="15%">Libra</TH>
+                                    <TH width="15%">Unidad</TH>
                                     <TH width="15%">Chico</TH>
                                     <TH width="15%">Grande</TH>
-                                    <TH width="15%">Libra/Unidad</TH>
+                                    
                                 </TR>
                            </thead>
                            <tbody>
@@ -207,13 +211,18 @@ foreach ($comp as $value) {
 
                                if($value->{'PK_CHICO'}!='' || $value->{'PK_GRANDE'}!=''){ $libra  = ''; }
                                if($UnitMeasure == 'KG' ){  $UnitMeasure = 'LB'; }
+
+
+                               if($UnitMeasure=='LB' or $UnitMeasure=='L' ){ $libras = $libra; $unidades=''; }else{  $libras =''; $unidades = $libra; }
  
                             $table .= '<tr>
+
                                <td width="15%" style="padding-right:10px; text-align: right;">'.$value->{'Item_id'}.'</td>
                                <td width="40%" ">('.$UnitMeasure.') '.$desc.'</td>
+                               <td width="15%" style="text-align: center; padding-right">'.number_format($libras,2).'</td>
+                               <td width="15%" style="text-align: center; padding-right">'.number_format($unidades,2).'</td>
                                <td width="15%" style="text-align: center; padding-right">'.$value->{'PK_CHICO'}.'</td>
                                <td width="15%" style="text-align: center; padding-right">'.$value->{'PK_GRANDE'}.'</td>
-                               <td width="15%" style="text-align: center; padding-right">'.number_format($libra,2).'</td>
                                </tr>';
 
                             }

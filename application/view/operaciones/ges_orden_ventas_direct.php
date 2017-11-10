@@ -843,7 +843,7 @@ function set_price_fields(){
                     }
 
                 ?>
-
+               </select>
          </fieldset>
 
          </div>
